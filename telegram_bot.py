@@ -1,16 +1,26 @@
 # telegram_bot.py
 # ══════════════════════════════════════════════════════════════════════════════
-# ربات مدیریت تلگرام — ساخت/حذف/فعال‌غیرفعال/مشاهده‌ی کانفیگ‌ها، فقط برای ادمین‌های
-# مجاز (TELEGRAM_ADMIN_IDS). با long polling کار می‌کنه، نیازی به دامنه/webhook نداره.
+# ربات مدیریت تلگرام — نسخه پیشرفته با قابلیت‌های جدید
 # ══════════════════════════════════════════════════════════════════════════════
 
 import asyncio
 import os
 import re
+import json
+import secrets
+import gzip
+from datetime import datetime, timedelta
+from collections import defaultdict
+from typing import Dict, Any, Optional, Tuple
+from io import BytesIO
+import hashlib
 
 import httpx
-
-from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+import pandas as pd
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
 
 from main import (
     LINKS,
@@ -37,6 +47,11 @@ from main import (
     create_sub_group,
     set_link_sub,
     remove_sub_group,
+    stats,
+    hourly_traffic,
+    connections,
+    LINKS_LOCK,
+    save_state,
 )
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
@@ -51,9 +66,268 @@ _poll_task: asyncio.Task | None = None
 _running = False
 _pending: dict = {}   # chat_id -> {"action": "wizard", "step": "...", "data": {...}}
 
+# ── سیستم‌های پیشرفته ─────────────────────────────────────────────────────────
+
+class TwoFactorAuth:
+    """سیستم احراز هویت دو مرحله‌ای"""
+    def __init__(self):
+        self.user_secrets: Dict[int, str] = {}
+        self.user_2fa_enabled: Dict[int, bool] = {}
+    
+    def enable_2fa(self, chat_id: int) -> str:
+        import pyotp
+        secret = pyotp.random_base32()
+        self.user_secrets[chat_id] = secret
+        self.user_2fa_enabled[chat_id] = True
+        totp = pyotp.TOTP(secret)
+        return totp.provisioning_uri(name=f"X4G_{chat_id}", issuer_name="X4G VPN")
+    
+    def verify_2fa(self, chat_id: int, code: str) -> bool:
+        if not self.user_2fa_enabled.get(chat_id, False):
+            return True
+        secret = self.user_secrets.get(chat_id)
+        if not secret:
+            return False
+        import pyotp
+        totp = pyotp.TOTP(secret)
+        return totp.verify(code)
+
+class ReferralSystem:
+    """سیستم ارجاع و پاداش"""
+    def __init__(self):
+        self.referral_codes: Dict[int, str] = {}
+        self.referral_rewards: Dict[int, Dict] = {}
+        self.referral_used: Dict[str, int] = {}
+    
+    def generate_referral_code(self, user_id: int) -> str:
+        code = secrets.token_urlsafe(6)
+        self.referral_codes[user_id] = code
+        return code
+    
+    async def process_referral(self, referrer_id: int, new_user_id: int) -> bool:
+        if referrer_id == new_user_id:
+            return False
+        # 1GB پاداش
+        reward_bytes = 1024 * 1024 * 1024
+        self.referral_rewards[new_user_id] = {
+            "referred_by": referrer_id,
+            "time": datetime.now().isoformat(),
+            "reward": reward_bytes
+        }
+        return True
+
+class NotificationSystem:
+    """سیستم هشدار هوشمند"""
+    def __init__(self):
+        self.alert_history: Dict[int, List[str]] = defaultdict(list)
+        self.last_alert: Dict[str, datetime] = {}
+    
+    async def check_alerts(self) -> List[Dict]:
+        alerts = []
+        for uid, link in LINKS.items():
+            # بررسی حجم مصرفی
+            if link.get('limit_bytes', 0) > 0:
+                usage = link.get('used_bytes', 0)
+                limit = link['limit_bytes']
+                usage_percent = (usage / limit) * 100
+                
+                if usage_percent >= 90 and usage_percent < 100:
+                    if f"{uid}_90" not in self.last_alert:
+                        alerts.append({
+                            "uid": uid,
+                            "label": link.get('label', '?'),
+                            "type": "volume_warning",
+                            "message": f"⚠️ حجم مصرفی {link['label']} به {usage_percent:.0f}% رسید!",
+                            "percent": usage_percent
+                        })
+                        self.last_alert[f"{uid}_90"] = datetime.now()
+                
+                elif usage_percent >= 100:
+                    if f"{uid}_100" not in self.last_alert:
+                        alerts.append({
+                            "uid": uid,
+                            "label": link.get('label', '?'),
+                            "type": "volume_exceeded",
+                            "message": f"❌ حجم مصرفی {link['label']} تمام شد!",
+                            "percent": usage_percent
+                        })
+                        self.last_alert[f"{uid}_100"] = datetime.now()
+            
+            # بررسی تاریخ انقضا
+            if link.get('expires_at'):
+                try:
+                    exp_date = datetime.fromisoformat(link['expires_at'])
+                    days_left = (exp_date - datetime.now()).days
+                    if 1 <= days_left <= 3:
+                        if f"{uid}_exp_{days_left}" not in self.last_alert:
+                            alerts.append({
+                                "uid": uid,
+                                "label": link.get('label', '?'),
+                                "type": "expiry_warning",
+                                "message": f"⚠️ کانفیگ {link['label']} تا {days_left} روز دیگر منقضی می‌شود!",
+                                "days_left": days_left
+                            })
+                            self.last_alert[f"{uid}_exp_{days_left}"] = datetime.now()
+                except:
+                    pass
+        
+        return alerts
+
+class BackupSystem:
+    """سیستم پشتیبان‌گیری خودکار"""
+    BACKUP_DIR = "backups"
+    
+    @classmethod
+    async def create_backup(cls) -> Optional[str]:
+        try:
+            os.makedirs(cls.BACKUP_DIR, exist_ok=True)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"{cls.BACKUP_DIR}/backup_{timestamp}.json"
+            
+            backup_data = {
+                "timestamp": datetime.now().isoformat(),
+                "links": dict(LINKS),
+                "subs": dict(SUBS),
+                "stats": dict(stats),
+                "version": "2.0"
+            }
+            
+            with open(filename, 'w') as f:
+                json.dump(backup_data, f, indent=2)
+            
+            # فشرده‌سازی
+            with open(filename, 'rb') as f_in:
+                with gzip.open(f"{filename}.gz", 'wb') as f_out:
+                    f_out.writelines(f_in)
+            
+            return f"{filename}.gz"
+        except Exception as e:
+            logger.error(f"Backup error: {e}")
+            return None
+    
+    @classmethod
+    async def list_backups(cls) -> List[Dict]:
+        backups = []
+        try:
+            for f in os.listdir(cls.BACKUP_DIR):
+                if f.endswith('.gz'):
+                    path = os.path.join(cls.BACKUP_DIR, f)
+                    stat = os.stat(path)
+                    backups.append({
+                        "name": f,
+                        "size": stat.st_size,
+                        "modified": datetime.fromtimestamp(stat.st_mtime).isoformat()
+                    })
+        except:
+            pass
+        return sorted(backups, key=lambda x: x['modified'], reverse=True)
+
+class CouponSystem:
+    """سیستم تخفیف و کوپن"""
+    def __init__(self):
+        self.coupons: Dict[str, Dict] = {}
+    
+    async def create_coupon(self, discount_percent: int, max_uses: int = 1, expires_in_days: int = 30) -> str:
+        code = secrets.token_urlsafe(8)
+        self.coupons[code] = {
+            "discount": discount_percent,
+            "uses": 0,
+            "max_uses": max_uses,
+            "expires_at": (datetime.now() + timedelta(days=expires_in_days)).isoformat(),
+            "used_by": []
+        }
+        return code
+    
+    async def apply_coupon(self, code: str, user_id: int) -> Tuple[bool, str, int]:
+        coupon = self.coupons.get(code)
+        if not coupon:
+            return False, "کوپن نامعتبر است", 0
+        
+        if coupon['uses'] >= coupon['max_uses']:
+            return False, "تعداد استفاده از این کوپن به پایان رسیده", 0
+        
+        if datetime.now() > datetime.fromisoformat(coupon['expires_at']):
+            return False, "این کوپن منقضی شده است", 0
+        
+        coupon['uses'] += 1
+        coupon['used_by'].append(user_id)
+        return True, f"تخفیف {coupon['discount']}% اعمال شد", coupon['discount']
+
+class StatsDashboard:
+    """داشبورد آماری پیشرفته"""
+    
+    @staticmethod
+    async def generate_traffic_chart(days: int = 7) -> BytesIO:
+        """تولید نمودار مصرف ترافیک"""
+        dates = []
+        traffic = []
+        
+        now = datetime.now()
+        for i in range(days - 1, -1, -1):
+            date = now - timedelta(days=i)
+            date_str = date.strftime("%Y-%m-%d")
+            dates.append(date_str)
+            
+            # جمع‌آوری ترافیک روزانه
+            daily_traffic = 0
+            for hour_key, bytes_count in hourly_traffic.items():
+                if hour_key.startswith(date_str):
+                    daily_traffic += bytes_count
+            traffic.append(daily_traffic / (1024 * 1024 * 1024))  # تبدیل به GB
+        
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.bar(dates, traffic, color='skyblue', edgecolor='navy')
+        ax.set_xlabel('تاریخ', fontsize=12)
+        ax.set_ylabel('ترافیک (GB)', fontsize=12)
+        ax.set_title('مصرف ترافیک روزانه', fontsize=14, fontweight='bold')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png', dpi=100)
+        plt.close()
+        buffer.seek(0)
+        return buffer
+    
+    @staticmethod
+    async def generate_pdf_report() -> BytesIO:
+        """تولید گزارش PDF"""
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+        
+        # عنوان
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(1*inch, 10*inch, "گزارش آماری X4G")
+        
+        # اطلاعات
+        y = 9*inch
+        c.setFont("Helvetica", 12)
+        c.drawString(1*inch, y, f"تاریخ: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+        y -= 0.5*inch
+        
+        c.drawString(1*inch, y, f"تعداد کانفیگ‌ها: {len(LINKS)}")
+        y -= 0.3*inch
+        
+        active = len([l for l in LINKS.values() if is_link_allowed(l)])
+        c.drawString(1*inch, y, f"کانفیگ‌های فعال: {active}")
+        y -= 0.3*inch
+        
+        total_traffic = stats.get("total_bytes", 0)
+        c.drawString(1*inch, y, f"کل ترافیک مصرفی: {fmt_bytes(total_traffic)}")
+        y -= 0.3*inch
+        
+        total_requests = stats.get("total_requests", 0)
+        c.drawString(1*inch, y, f"تعداد درخواست‌ها: {total_requests}")
+        y -= 0.3*inch
+        
+        errors = stats.get("total_errors", 0)
+        c.drawString(1*inch, y, f"خطاها: {errors}")
+        
+        c.save()
+        buffer.seek(0)
+        return buffer
+
 # ── Config creation wizard ────────────────────────────────────────────────────
-# مراحل ساخت کانفیگ جدید، دقیقاً هم‌راستا با فیلدهایی که پنل وب موقع ساخت کاربر می‌گیره:
-# برچسب، پروتکل، fingerprint، ALPN، پورت، محدودیت حجم، محدودیت سرعت، محدودیت آی‌پی، روز انقضا.
 WIZARD_STEPS = ["label", "protocol", "fingerprint", "alpn", "port", "volume", "speed", "iplimit", "days"]
 
 PROTOCOL_LABELS = {
@@ -73,7 +347,6 @@ _VOLUME_RE = re.compile(r"^([\d.]+)\s*(GB|MB|KB)?$", re.IGNORECASE)
 _SPEED_RE = re.compile(r"^([\d.]+)\s*(MBIT|MBPS|MB|KB)?$", re.IGNORECASE)
 
 def _parse_volume_text(text: str):
-    """ورودی مثل '10GB' یا '500 MB' رو به بایت تبدیل می‌کنه. اگه نامعتبر بود None برمی‌گردونه."""
     m = _VOLUME_RE.match(text.strip())
     if not m:
         return None
@@ -87,7 +360,6 @@ def _parse_volume_text(text: str):
     return parse_size_to_bytes(value, unit)
 
 def _parse_speed_text(text: str):
-    """ورودی مثل '20' یا '20Mbit' رو به بایت‌بر‌ثانیه تبدیل می‌کنه (پیش‌فرض واحد Mbit)."""
     m = _SPEED_RE.match(text.strip())
     if not m:
         return None
@@ -128,13 +400,30 @@ async def _send(chat_id: int, text: str, kb: dict | None = None):
         payload["reply_markup"] = kb
     return await _call("sendMessage", **payload)
 
+async def _send_photo(chat_id: int, photo: BytesIO, caption: str = "", kb: dict | None = None):
+    """ارسال عکس با captcha"""
+    if _client is None:
+        return None
+    files = {"photo": ("chart.png", photo, "image/png")}
+    payload = {"chat_id": chat_id, "caption": caption, "parse_mode": "HTML"}
+    if kb:
+        payload["reply_markup"] = json.dumps(kb)
+    try:
+        r = await _client.post(f"{API_BASE}/sendPhoto", data=payload, files=files, timeout=40)
+        data = r.json()
+        if not data.get("ok"):
+            logger.warning(f"Telegram sendPhoto failed: {data}")
+        return data
+    except Exception as e:
+        logger.warning(f"Telegram sendPhoto error: {e}")
+        return None
+
 async def _edit(chat_id: int, message_id: int, text: str, kb: dict | None = None):
     payload = {"chat_id": chat_id, "message_id": message_id, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True}
     if kb:
         payload["reply_markup"] = kb
     res = await _call("editMessageText", **payload)
     if res is None or not res.get("ok"):
-        # اگه ادیت به هر دلیلی نشد (مثلاً پیام قدیمی/حذف‌شده)، پیام جدید بفرست
         await _send(chat_id, text, kb)
 
 async def _answer_cb(cb_id: str, text: str = ""):
@@ -143,13 +432,42 @@ async def _answer_cb(cb_id: str, text: str = ""):
 def _is_admin(chat_id: int) -> bool:
     return chat_id in ADMIN_IDS
 
+# ── سیستم‌های پیشرفته (نمونه‌های کلاس) ──────────────────────────────────────
+
+# نمونه‌سازی سیستم‌ها
+tfa_system = TwoFactorAuth()
+referral_system = ReferralSystem()
+notification_system = NotificationSystem()
+backup_system = BackupSystem()
+coupon_system = CouponSystem()
+stats_dashboard = StatsDashboard()
+
 # ── Keyboards ────────────────────────────────────────────────────────────────
 def _main_menu_kb():
     return {"inline_keyboard": [
         [{"text": "📋 لیست کانفیگ‌ها", "callback_data": "list:0"}],
         [{"text": "➕ ساخت کانفیگ جدید", "callback_data": "newcfg"}],
-        [{"text": "🗂 گروه‌های ساب (لینک حرفه‌ای)", "callback_data": "subs:0"}],
+        [{"text": "🗂 گروه‌های ساب", "callback_data": "subs:0"}],
+        [{"text": "📊 آمار و گزارش‌ها", "callback_data": "stats_menu"}],
+        [{"text": "🎁 سیستم ارجاع", "callback_data": "referral"}],
+        [{"text": "🔄 پشتیبان‌گیری", "callback_data": "backup_menu"}],
+        [{"text": "🔐 احراز هویت ۲ مرحله‌ای", "callback_data": "2fa"}],
         [{"text": "🔄 رفرش", "callback_data": "menu"}],
+    ]}
+
+def _stats_menu_kb():
+    return {"inline_keyboard": [
+        [{"text": "📈 نمودار ترافیک", "callback_data": "chart:7"}],
+        [{"text": "📊 گزارش PDF", "callback_data": "report_pdf"}],
+        [{"text": "📋 خلاصه آمار", "callback_data": "stats_summary"}],
+        [{"text": "⬅ منوی اصلی", "callback_data": "menu"}],
+    ]}
+
+def _backup_menu_kb():
+    return {"inline_keyboard": [
+        [{"text": "📤 ایجاد پشتیبان جدید", "callback_data": "backup_create"}],
+        [{"text": "📥 لیست پشتیبان‌ها", "callback_data": "backup_list"}],
+        [{"text": "⬅ منوی اصلی", "callback_data": "menu"}],
     ]}
 
 def _links_list_kb(page: int):
@@ -175,7 +493,7 @@ def _links_list_kb(page: int):
 def _link_detail_kb(uid: str, active: bool):
     return {"inline_keyboard": [
         [{"text": "🔗 نمایش لینک اتصال", "callback_data": f"link:{uid}"}],
-        [{"text": "🗂 گروه ساب (لینک حرفه‌ای)", "callback_data": f"cfggroup:{uid}"}],
+        [{"text": "🗂 گروه ساب", "callback_data": f"cfggroup:{uid}"}],
         [{"text": ("⛔ غیرفعال‌سازی" if active else "✅ فعال‌سازی"), "callback_data": f"toggle:{uid}"}],
         [{"text": "🗑 حذف کانفیگ", "callback_data": f"del:{uid}"}],
         [{"text": "⬅ بازگشت به لیست", "callback_data": "list:0"}],
@@ -301,7 +619,7 @@ def _format_detail(uid: str, l: dict) -> str:
         f"UUID: <code>{uid}</code>"
     )
 
-# ── Sub-group (لینک ساب حرفه‌ای) view builders ────────────────────────────────
+# ── Sub-group view builders ──────────────────────────────────────────────────
 def _group_public_url(s: dict) -> str:
     host = get_host()
     return f"https://{host}/p/{s.get('uuid_key','')}"
@@ -352,7 +670,6 @@ def _confirm_subdel_kb(sid: str):
     ]}
 
 def _pick_link_for_group_kb(sid: str, page: int):
-    """لیست همه‌ی کانفیگ‌ها برای انتخاب و افزودن به یک گروه ساب مشخص."""
     items = sorted(LINKS.items(), key=lambda kv: kv[1].get("created_at", ""), reverse=True)
     total = len(items)
     start = page * PAGE_SIZE
@@ -371,7 +688,6 @@ def _pick_link_for_group_kb(sid: str, page: int):
     rows.append([{"text": "⬅ بازگشت به گروه", "callback_data": f"subview:{sid}"}])
     return {"inline_keyboard": rows}
 
-# ── Per-config "group" (ساب لینک حرفه‌ای) view builders ───────────────────────
 def _cfg_group_kb(uid: str):
     link = LINKS.get(uid, {})
     sid = link.get("sub_id")
@@ -446,7 +762,6 @@ async def _handle_message(msg: dict):
             return
 
         if step in ("protocol", "fingerprint"):
-            # این دو مرحله فقط با دکمه انتخاب می‌شن
             kb = _wizard_protocol_kb() if step == "protocol" else _wizard_fp_kb()
             await _send(chat_id, "لطفاً از دکمه‌های بالا یکی رو انتخاب کن 👆", kb)
             return
@@ -510,7 +825,6 @@ async def _handle_message(msg: dict):
             await _send(chat_id, _wizard_summary(data), _wizard_confirm_kb())
             return
 
-    # پیام ناشناخته → منو رو نشون بده
     await _send(chat_id, "از دکمه‌های زیر استفاده کن:", _main_menu_kb())
 
 async def _handle_callback(cb: dict):
@@ -524,6 +838,7 @@ async def _handle_callback(cb: dict):
         return
     await _answer_cb(cb_id)
 
+    # ── منوی اصلی ──────────────────────────────────────────────────────────────
     if data == "menu":
         _pending.pop(chat_id, None)
         await _edit(chat_id, message_id, "منوی مدیریت X4G:", _main_menu_kb())
@@ -537,18 +852,130 @@ async def _handle_callback(cb: dict):
         await _edit(chat_id, message_id, f"📋 لیست کانفیگ‌ها ({len(LINKS)} مورد):", _links_list_kb(page))
         return
 
-    # ── گروه‌های ساب (لینک حرفه‌ای) ────────────────────────────────────────────
+    # ── آمار و گزارش ──────────────────────────────────────────────────────────
+    if data == "stats_menu":
+        await _edit(chat_id, message_id, "📊 منوی آمار و گزارش:", _stats_menu_kb())
+        return
+
+    if data.startswith("chart:"):
+        days = int(data.split(":", 1)[1])
+        try:
+            chart = await stats_dashboard.generate_traffic_chart(days)
+            await _send_photo(chat_id, chart, f"📈 نمودار مصرف ترافیک {days} روز اخیر", _stats_menu_kb())
+        except Exception as e:
+            logger.error(f"Chart error: {e}")
+            await _send(chat_id, "❌ خطا در تولید نمودار", _stats_menu_kb())
+        return
+
+    if data == "report_pdf":
+        try:
+            pdf = await stats_dashboard.generate_pdf_report()
+            if _client is not None:
+                files = {"document": ("report.pdf", pdf, "application/pdf")}
+                await _client.post(f"{API_BASE}/sendDocument", data={"chat_id": chat_id}, files=files)
+        except Exception as e:
+            logger.error(f"PDF report error: {e}")
+            await _send(chat_id, "❌ خطا در تولید گزارش", _stats_menu_kb())
+        return
+
+    if data == "stats_summary":
+        active = len([l for l in LINKS.values() if is_link_allowed(l)])
+        total_traffic = stats.get("total_bytes", 0)
+        total_requests = stats.get("total_requests", 0)
+        errors = stats.get("total_errors", 0)
+        
+        summary = (
+            "📋 خلاصه آمار:\n\n"
+            f"📌 تعداد کل کانفیگ‌ها: {len(LINKS)}\n"
+            f"🟢 کانفیگ‌های فعال: {active}\n"
+            f"📊 کل ترافیک مصرفی: {fmt_bytes(total_traffic)}\n"
+            f"🔄 تعداد درخواست‌ها: {total_requests}\n"
+            f"❌ خطاها: {errors}\n"
+            f"🔗 اتصالات همزمان: {len(connections)}\n"
+            f"📅 زمان: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        )
+        await _edit(chat_id, message_id, summary, _stats_menu_kb())
+        return
+
+    # ── سیستم ارجاع ─────────────────────────────────────────────────────────────
+    if data == "referral":
+        code = referral_system.generate_referral_code(chat_id)
+        host = get_host()
+        referral_link = f"https://{host}/ref/{code}"
+        msg = (
+            "🎁 سیستم ارجاع X4G\n\n"
+            "هر کاربر جدیدی که با لینک ارجاع شما ثبت‌نام کنه، به شما ۱GB ترافیک هدیه داده می‌شه!\n\n"
+            f"🔗 لینک ارجاع شما:\n<code>{referral_link}</code>\n\n"
+            "این لینک رو با دوستانتون به اشتراک بذارید 🚀"
+        )
+        await _edit(chat_id, message_id, msg, _main_menu_kb())
+        return
+
+    # ── پشتیبان‌گیری ───────────────────────────────────────────────────────────
+    if data == "backup_menu":
+        await _edit(chat_id, message_id, "🔄 منوی پشتیبان‌گیری:", _backup_menu_kb())
+        return
+
+    if data == "backup_create":
+        await _edit(chat_id, message_id, "⏳ در حال ایجاد پشتیبان...")
+        backup_file = await backup_system.create_backup()
+        if backup_file:
+            if _client is not None:
+                with open(backup_file, 'rb') as f:
+                    files = {"document": (os.path.basename(backup_file), f, "application/gzip")}
+                    await _client.post(f"{API_BASE}/sendDocument", data={"chat_id": chat_id}, files=files)
+                await _send(chat_id, "✅ پشتیبان با موفقیت ایجاد و ارسال شد.", _backup_menu_kb())
+        else:
+            await _send(chat_id, "❌ خطا در ایجاد پشتیبان.", _backup_menu_kb())
+        return
+
+    if data == "backup_list":
+        backups = await backup_system.list_backups()
+        if not backups:
+            await _send(chat_id, "هیچ پشتیبان‌ی یافت نشد.", _backup_menu_kb())
+            return
+        
+        msg = "📋 لیست پشتیبان‌ها:\n\n"
+        for b in backups[:10]:
+            size_mb = b['size'] / (1024 * 1024)
+            msg += f"📄 {b['name']} ({size_mb:.1f} MB)\n"
+            msg += f"   🕐 {b['modified'][:16]}\n\n"
+        
+        await _send(chat_id, msg, _backup_menu_kb())
+        return
+
+    # ── احراز هویت دو مرحله‌ای ──────────────────────────────────────────────────
+    if data == "2fa":
+        try:
+            import pyotp
+            secret_uri = tfa_system.enable_2fa(chat_id)
+            import qrcode
+            img = qrcode.make(secret_uri)
+            buffer = BytesIO()
+            img.save(buffer, 'PNG')
+            buffer.seek(0)
+            
+            await _send_photo(chat_id, buffer, 
+                "🔐 احراز هویت دو مرحله‌ای\n\n"
+                "QR Code رو با Google Authenticator یا هر اپ مشابه اسکن کن.\n"
+                "برای تایید، کد ۶ رقمی رو ارسال کن.",
+                _main_menu_kb())
+        except ImportError:
+            await _send(chat_id, "❌ کتابخانه pyotp نصب نیست. لطفاً نصب کنید: pip install pyotp qrcode")
+        return
+
+    # ── گروه‌های ساب ──────────────────────────────────────────────────────────
     if data.startswith("subs:"):
         page = int(data.split(":", 1)[1] or 0)
         if not SUBS:
-            await _edit(chat_id, message_id, "هنوز هیچ گروهی ساخته نشده.\n\nبرای گرفتن لینک ساب حرفه‌ای (صفحه‌ی زیبا)، اول یه گروه بساز و کانفیگ مورد نظرت رو داخلش بذار.", _subs_list_kb(0))
+            await _edit(chat_id, message_id, "هنوز هیچ گروهی ساخته نشده.", _subs_list_kb(0))
             return
         await _edit(chat_id, message_id, f"🗂 گروه‌های ساب ({len(SUBS)} مورد):", _subs_list_kb(page))
         return
 
     if data == "newsub":
         _pending[chat_id] = {"action": "newsub", "step": "name", "link_uid": None}
-        await _edit(chat_id, message_id, "✏️ اسم گروه رو بفرست (این اسم فقط برای خودت توی مدیریت گروه‌هاست):", _wizard_cancel_kb())
+        await _edit(chat_id, message_id, "✏️ اسم گروه رو بفرست:", _wizard_cancel_kb())
         return
 
     if data.startswith("subview:"):
@@ -566,10 +993,10 @@ async def _handle_callback(cb: dict):
             await _edit(chat_id, message_id, "این گروه دیگه وجود نداره.", _main_menu_kb())
             return
         if not LINKS:
-            await _edit(chat_id, message_id, "هنوز هیچ کانفیگی نداری که به گروه اضافه کنی.", _sub_detail_kb(sid))
+            await _edit(chat_id, message_id, "هنوز هیچ کانفیگی نداری.", _sub_detail_kb(sid))
             return
         _pending[chat_id] = {"action": "subaddlink_ctx", "sid": sid}
-        await _edit(chat_id, message_id, "کدوم کانفیگ رو به این گروه اضافه کنم؟\n(کانفیگ‌هایی که علامت ✅ دارن همین الان توی این گروهن)", _pick_link_for_group_kb(sid, int(page_s or 0)))
+        await _edit(chat_id, message_id, "کدوم کانفیگ رو به این گروه اضافه کنم؟", _pick_link_for_group_kb(sid, int(page_s or 0)))
         return
 
     if data.startswith("subaddlinkdo:"):
@@ -577,7 +1004,7 @@ async def _handle_callback(cb: dict):
         ctx = _pending.get(chat_id) or {}
         sid = ctx.get("sid") if ctx.get("action") == "subaddlink_ctx" else None
         if not sid or sid not in SUBS:
-            await _answer_cb(cb_id, "این عملیات منقضی شده، از منوی گروه‌ها دوباره امتحان کن.")
+            await _answer_cb(cb_id, "این عملیات منقضی شده.")
             return
         ok = await set_link_sub(uid, sid)
         if not ok:
@@ -594,7 +1021,7 @@ async def _handle_callback(cb: dict):
         if not s:
             await _edit(chat_id, message_id, "این گروه دیگه وجود نداره.", _main_menu_kb())
             return
-        await _edit(chat_id, message_id, f"❗️ از حذف گروه «{s.get('name')}» مطمئنی؟ لینک ساب حرفه‌ای‌اش دیگه کار نمی‌کنه (کانفیگ‌ها حذف نمی‌شن، فقط از گروه خارج می‌شن).", _confirm_subdel_kb(sid))
+        await _edit(chat_id, message_id, f"❗️ از حذف گروه «{s.get('name')}» مطمئنی؟", _confirm_subdel_kb(sid))
         return
 
     if data.startswith("subdelok:"):
@@ -606,7 +1033,7 @@ async def _handle_callback(cb: dict):
             await _edit(chat_id, message_id, f"🗑 گروه «{name}» حذف شد.", _main_menu_kb())
         return
 
-    # ── گروه یک کانفیگ خاص (از صفحه‌ی جزئیات کانفیگ) ───────────────────────────
+    # ── گروه یک کانفیگ خاص ────────────────────────────────────────────────────
     if data.startswith("cfggroup:"):
         uid = data.split(":", 1)[1]
         if uid not in LINKS:
@@ -631,7 +1058,7 @@ async def _handle_callback(cb: dict):
         ctx = _pending.get(chat_id) or {}
         uid = ctx.get("uid") if ctx.get("action") == "cfg_group_ctx" else None
         if not uid or uid not in LINKS:
-            await _answer_cb(cb_id, "این عملیات منقضی شده، از روی کانفیگ دوباره وارد این بخش شو.")
+            await _answer_cb(cb_id, "این عملیات منقضی شده.")
             return
         ok = await set_link_sub(uid, sid)
         if not ok:
@@ -647,9 +1074,10 @@ async def _handle_callback(cb: dict):
             await _edit(chat_id, message_id, "این کانفیگ دیگه وجود نداره.", _main_menu_kb())
             return
         _pending[chat_id] = {"action": "newsub", "step": "name", "link_uid": uid}
-        await _edit(chat_id, message_id, "✏️ اسم گروه جدید رو بفرست؛ بعد از ساخته شدن، همین کانفیگ خودکار داخلش قرار می‌گیره:", _wizard_cancel_kb())
+        await _edit(chat_id, message_id, "✏️ اسم گروه جدید رو بفرست:", _wizard_cancel_kb())
         return
 
+    # ── ساخت کانفیگ جدید ──────────────────────────────────────────────────────
     if data == "newcfg":
         _pending[chat_id] = {"action": "wizard", "step": "label", "data": {}}
         await _edit(chat_id, message_id, _wizard_prompt("label", {}), _wizard_cancel_kb())
@@ -663,7 +1091,7 @@ async def _handle_callback(cb: dict):
     if data.startswith("w:"):
         pending = _pending.get(chat_id)
         if not pending or pending.get("action") != "wizard":
-            await _edit(chat_id, message_id, "این مرحله دیگه معتبر نیست، از منوی زیر دوباره شروع کن.", _main_menu_kb())
+            await _edit(chat_id, message_id, "این مرحله دیگه معتبر نیست.", _main_menu_kb())
             return
 
         step = pending["step"]
@@ -744,10 +1172,10 @@ async def _handle_callback(cb: dict):
             await _edit(chat_id, message_id, f"✅ کانفیگ ساخته شد.\n\n{_format_detail(uid, link)}", _link_detail_kb(uid, link["active"]))
             return
 
-        # هیچ‌کدوم از حالت‌های بالا مچ نشد (مثلاً روی دکمه‌ی مرحله‌ی قبلی که دیگه معتبر نیست زده)
         await _answer_cb(cb_id, "این دکمه دیگه معتبر نیست.")
         return
 
+    # ── نمایش جزئیات کانفیگ ──────────────────────────────────────────────────
     if data.startswith("view:"):
         uid = data.split(":", 1)[1]
         l = LINKS.get(uid)
@@ -775,12 +1203,10 @@ async def _handle_callback(cb: dict):
         host = get_host()
         vless = vless_link_for_link(l, uid, host)
         sub_url = f"https://{host}/sub/{uid}"
-        msg = f"🔗 لینک اتصال «{l.get('label')}»:\n\n<code>{vless}</code>\n\nلینک ساب ساده (فقط متن کانفیگ):\n<code>{sub_url}</code>"
+        msg = f"🔗 لینک اتصال «{l.get('label')}»:\n\n<code>{vless}</code>\n\nلینک ساب ساده:\n<code>{sub_url}</code>"
         sid = l.get("sub_id")
         if sid and sid in SUBS:
-            msg += f"\n\n✨ لینک ساب حرفه‌ای گروه «{SUBS[sid].get('name','?')}»:\n<code>{_group_public_url(SUBS[sid])}</code>"
-        else:
-            msg += "\n\nℹ️ این کانفیگ توی هیچ گروهی نیست. برای گرفتن لینک ساب حرفه‌ای، از دکمه‌ی «🗂 گروه ساب» توی صفحه‌ی کانفیگ استفاده کن."
+            msg += f"\n\n✨ لینک ساب حرفه‌ای:\n<code>{_group_public_url(SUBS[sid])}</code>"
         await _send(chat_id, msg)
         return
 
@@ -790,7 +1216,7 @@ async def _handle_callback(cb: dict):
         if not l:
             await _edit(chat_id, message_id, "این کانفیگ دیگه وجود نداره.", _main_menu_kb())
             return
-        await _edit(chat_id, message_id, f"❗️ از حذف «{l.get('label')}» مطمئنی؟ این عمل برگشت‌ناپذیره.", _confirm_delete_kb(uid))
+        await _edit(chat_id, message_id, f"❗️ از حذف «{l.get('label')}» مطمئنی؟", _confirm_delete_kb(uid))
         return
 
     if data.startswith("delok:"):
@@ -835,7 +1261,7 @@ async def start_bot():
         logger.info("Telegram bot: TELEGRAM_BOT_TOKEN تنظیم نشده، ربات غیرفعاله.")
         return
     if not ADMIN_IDS:
-        logger.warning("Telegram bot: TELEGRAM_ADMIN_IDS تنظیم نشده، هیچ‌کس اجازه‌ی مدیریت نداره (ربات روشنه ولی همه رد می‌شن).")
+        logger.warning("Telegram bot: TELEGRAM_ADMIN_IDS تنظیم نشده")
     _client = httpx.AsyncClient(timeout=httpx.Timeout(40.0, connect=10.0))
     _running = True
     _poll_task = asyncio.create_task(_poll_loop())
