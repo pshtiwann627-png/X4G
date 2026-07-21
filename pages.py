@@ -2624,31 +2624,29 @@ DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 # تابع صفحه پابلیک ساب - اصلاح‌شده و بدون باگ
 # =======================================================
 def get_public_page_html(uuid_key: str) -> str:
-    """صفحه پابلیک ساب — نسخه‌ی نهایی با نمودارهای دقیق و دایره‌ای"""
+    """صفحه پابلیک ساب — طراحی مینیمال و ساده (مطابق با تصاویر)"""
     
     html = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>X4G Sub · اشتراک حرفه‌ای</title>
+<title>X4G Sub · اشتراک</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 /* ========================================
-   مدرن‌ترین طراحی — X4G v9.5
+   طراحی مینیمال — X4G v9.5
    ======================================== */
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box}
 
 :root{
-  --bg:#05080f;
-  --glass:rgba(255,255,255,0.03);
-  --glass-border:rgba(255,255,255,0.05);
-  --glass-shadow:0 20px 60px rgba(0,0,0,0.7);
+  --bg:#0a0e17;
+  --card:#111927;
+  --card-border:#1e2a3a;
   --text:#e8edf5;
-  --text-dim:rgba(255,255,255,0.25);
-  --text-mid:rgba(255,255,255,0.5);
+  --text-dim:rgba(255,255,255,0.4);
+  --text-mid:rgba(255,255,255,0.6);
   --accent:#5b8def;
   --accent2:#7aa3ff;
   --green:#1FB87E;
@@ -2659,17 +2657,16 @@ def get_public_page_html(uuid_key: str) -> str:
   --amber-t:#F9C988;
   --purple:#9D7BF0;
   --purple-t:#BCA4F7;
-  --transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+  --radius:12px;
 }
 
 [data-theme="light"]{
-  --bg:#eef2f8;
-  --glass:rgba(255,255,255,0.5);
-  --glass-border:rgba(255,255,255,0.6);
-  --glass-shadow:0 20px 60px rgba(0,0,0,0.06);
+  --bg:#f0f2f5;
+  --card:#ffffff;
+  --card-border:#dce0e8;
   --text:#111827;
-  --text-dim:rgba(0,0,0,0.2);
-  --text-mid:rgba(0,0,0,0.45);
+  --text-dim:rgba(0,0,0,0.3);
+  --text-mid:rgba(0,0,0,0.55);
   --accent:#3b6fd4;
   --accent2:#5a88e8;
   --green:#0E9A6A;
@@ -2682,691 +2679,146 @@ def get_public_page_html(uuid_key: str) -> str:
   --purple-t:#5A3CAD;
 }
 
-html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);font-size:14px;transition:var(--transition);overflow-x:hidden}
+html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);font-size:14px;transition:all .3s}
 
-/* ── پس‌زمینه ── */
-.bg-fx{
-  position:fixed;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% -10%, rgba(91,141,239,0.06), transparent 60%),var(--bg);
-  z-index:0;pointer-events:none;transition:var(--transition)
-}
-.grid-fx{
-  position:fixed;inset:0;
-  background-image:linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
-  background-size:56px 56px;
-  z-index:0;pointer-events:none
-}
-.orb{
-  position:fixed;border-radius:50%;filter:blur(150px);z-index:0;animation:float 20s ease-in-out infinite;pointer-events:none
-}
-.orb1{width:600px;height:600px;background:rgba(91,141,239,0.04);top:-150px;right:-120px;animation-delay:0s}
-.orb2{width:450px;height:450px;background:rgba(157,123,240,0.03);bottom:-100px;left:-100px;animation-delay:7s}
-.orb3{width:300px;height:300px;background:rgba(31,184,126,0.02);top:60%;left:20%;animation-delay:14s}
-@keyframes float{
-  0%,100%{transform:translateY(0) scale(1)}
-  33%{transform:translateY(-50px) scale(1.08)}
-  66%{transform:translateY(40px) scale(0.92)}
-}
-
-/* ── ذرات ── */
-.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.particle{
-  position:absolute;width:2px;height:2px;background:rgba(255,255,255,0.08);border-radius:50%;
-  animation:twinkle var(--d) ease-in-out infinite alternate
-}
-.particle:nth-child(1){top:8%;left:15%;--d:4s;animation-delay:0s}
-.particle:nth-child(2){top:25%;right:10%;--d:5s;animation-delay:1.2s}
-.particle:nth-child(3){bottom:20%;left:8%;--d:3.8s;animation-delay:0.6s}
-.particle:nth-child(4){top:55%;right:20%;--d:4.5s;animation-delay:2s}
-.particle:nth-child(5){bottom:35%;right:5%;--d:3.5s;animation-delay:0.9s}
-.particle:nth-child(6){top:12%;left:45%;--d:5.5s;animation-delay:1.8s}
-.particle:nth-child(7){bottom:12%;left:35%;--d:4.2s;animation-delay:0.3s}
-.particle:nth-child(8){top:42%;left:6%;--d:4.8s;animation-delay:2.2s}
-@keyframes twinkle{0%{opacity:0.02;transform:scale(0.3)}100%{opacity:0.4;transform:scale(1.4)}}
-
-.wrap{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:30px 20px 70px;animation:fadeSlide 0.9s cubic-bezier(0.16,1,0.3,1)}
-@keyframes fadeSlide{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.wrap{max-width:700px;margin:0 auto;padding:20px 16px 40px}
 
 /* ── هدر ── */
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;gap:12px}
-.brand{display:flex;align-items:center;gap:14px;min-width:0}
-.brand-img{
-  width:48px;height:48px;border-radius:50%;overflow:hidden;
-  border:2px solid var(--glass-border);
-  box-shadow:0 0 50px rgba(91,141,239,0.08);
-  flex-shrink:0;transition:var(--transition)
-}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-img{width:38px;height:38px;border-radius:50%;overflow:hidden;border:1px solid var(--card-border);flex-shrink:0}
 .brand-img img{width:100%;height:100%;object-fit:cover}
-.brand-name{
-  font-size:16px;font-weight:800;color:var(--text);
-  background:linear-gradient(135deg,var(--text),var(--accent2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent
-}
-.brand-sub{font-size:10px;color:var(--text-dim);font-weight:500}
-.top-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.icon-btn{
-  width:40px;height:40px;border-radius:14px;
-  background:var(--glass);backdrop-filter:blur(16px);
-  border:1px solid var(--glass-border);
-  color:var(--text-mid);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;cursor:pointer;transition:var(--transition)
-}
-.icon-btn:hover{background:rgba(91,141,239,0.04);color:var(--accent2);border-color:rgba(91,141,239,0.12);transform:translateY(-2px)}
-#refresh-icon{transition:transform 0.3s ease}
-#refresh-icon.spin{animation:spin 0.8s linear 1}
+.brand-name{font-size:15px;font-weight:800;color:var(--text)}
+.brand-sub{font-size:9px;color:var(--text-dim)}
+.theme-btn{background:var(--card);border:1px solid var(--card-border);color:var(--text-mid);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.2s}
+.theme-btn:hover{background:rgba(91,141,239,0.06);color:var(--accent2)}
 
-/* ── کارت اطلاعات ── */
-.sub-info{
-  background:var(--glass);backdrop-filter:blur(32px);
-  border:1px solid var(--glass-border);
-  border-radius:30px;padding:32px 32px 26px;
-  margin-bottom:20px;box-shadow:var(--glass-shadow);
-  position:relative;overflow:hidden;transition:var(--transition)
-}
-.sub-info::before{
-  content:'';position:absolute;top:-80px;right:-80px;
-  width:280px;height:280px;
-  background:radial-gradient(circle,var(--accent),transparent 70%);
-  opacity:0.03;pointer-events:none;animation:pulseGlow 12s ease-in-out infinite
-}
-@keyframes pulseGlow{0%,100%{transform:scale(1);opacity:0.02}50%{transform:scale(1.2);opacity:0.05}}
+/* ── کارت اشتراک ── */
+.sub-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:20px 22px 18px;margin-bottom:16px}
+.sub-id{font-size:11px;color:var(--text-dim);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.sub-id span{font-family:ui-monospace,monospace;color:var(--accent2);background:rgba(91,141,239,0.06);padding:2px 8px;border-radius:4px;border:1px solid rgba(91,141,239,0.06)}
 
-/* ── تاریخ و زمان ── */
-.datetime-row{
-  display:flex;align-items:center;gap:8px;
-  font-size:11px;color:var(--text-mid);
-  padding:8px 14px;margin-bottom:14px;
-  background:rgba(91,141,239,0.02);
-  border:1px solid var(--glass-border);
-  border-radius:12px;
-  transition:var(--transition);
-  position:relative;z-index:1;
-  direction:ltr;
-}
-.datetime-row i{
-  color:var(--accent);
-  font-size:14px;
-  margin-left:4px;
-}
-.datetime-row .date-separator{
-  color:var(--text-dim);
-  margin:0 4px;
-}
-#live-datetime{
-  font-family:ui-monospace,monospace;
-  font-weight:600;
-  color:var(--accent2);
-  min-width:70px;
-}
-#live-date{
-  font-weight:500;
-  color:var(--text-mid);
-  min-width:90px;
-}
+.sub-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.sub-table tr{border-bottom:1px solid rgba(255,255,255,0.04)}
+.sub-table tr:last-child{border-bottom:none}
+.sub-table td{padding:5px 0;color:var(--text-mid)}
+.sub-table td:last-child{text-align:left;color:var(--text);font-weight:600;direction:ltr}
+.sub-table .status-active{color:var(--green-t)}
+.sub-table .status-expired{color:var(--red-t)}
 
-.sub-eyebrow{
-  font-size:10px;font-weight:700;color:var(--accent2);
-  text-transform:uppercase;letter-spacing:0.14em;
-  margin-bottom:8px;display:flex;align-items:center;gap:6px;
-  position:relative;z-index:1
-}
-.sub-name{
-  font-size:28px;font-weight:900;color:var(--text);
-  margin-bottom:6px;letter-spacing:-0.03em;
-  position:relative;z-index:1
-}
-.sub-desc{
-  font-size:13px;color:var(--text-mid);line-height:1.9;
-  margin-bottom:14px;position:relative;z-index:1
-}
-.sub-meta-row{
-  font-size:10.5px;color:var(--text-dim);
-  margin-bottom:14px;display:flex;align-items:center;gap:6px;
-  position:relative;z-index:1
-}
-.sub-sub-box{
-  background:rgba(91,141,239,0.03);border:1px solid var(--glass-border);
-  border-radius:16px;padding:12px 18px;
-  display:flex;align-items:center;
-  position:relative;z-index:1
-}
-.sub-sub-url{
-  font-family:ui-monospace,monospace;font-size:10px;
-  color:var(--accent2);word-break:break-all;flex:1;min-width:140px
-}
-
-/* ── ردیف دکمه‌های ساب ── */
-.sub-actions-row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-top:14px;
-  flex-wrap:wrap;
-  position:relative;
-  z-index:1;
-}
-.sub-actions-row .btn{
-  flex:1;
-  justify-content:center;
-  min-width:120px;
-}
-
-/* ── آمار ── */
-.stats-bar{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px
-}
-.stat-card{
-  background:var(--glass);backdrop-filter:blur(16px);
-  border:1px solid var(--glass-border);border-radius:20px;
-  padding:20px 22px;transition:var(--transition);position:relative;overflow:hidden
-}
-.stat-card::before{
-  content:'';position:absolute;top:0;right:0;width:2px;height:100%;
-  background:var(--accent);opacity:0;transition:var(--transition)
-}
-.stat-card:hover{border-color:rgba(91,141,239,0.12);transform:translateY(-3px);box-shadow:var(--glass-shadow)}
-.stat-card:hover::before{opacity:1}
-.stat-label{font-size:9px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px}
-.stat-val{font-size:26px;font-weight:800;color:var(--text);line-height:1;letter-spacing:-0.02em}
-.stat-sub{font-size:9.5px;color:var(--text-mid);margin-top:6px}
-
-/* ── کانفیگ‌ها ── */
-.cfg-title{
-  font-size:12px;font-weight:800;color:var(--text-mid);
-  margin-bottom:14px;display:flex;align-items:center;gap:7px;
-  text-transform:uppercase;letter-spacing:0.08em
-}
-.cfg-title i{color:var(--accent);font-size:16px}
-.cfg-grid{display:grid;gap:14px}
-
-.cfg-card{
-  background:var(--glass);backdrop-filter:blur(24px);
-  border:1px solid var(--glass-border);border-radius:24px;
-  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  position:relative;overflow:hidden
-}
-.cfg-card:hover{border-color:rgba(91,141,239,0.12);box-shadow:var(--glass-shadow);transform:translateY(-4px)}
-.cfg-card.inactive{opacity:0.5}
-.cfg-top{padding:20px 24px 16px;position:relative;z-index:1}
-.cfg-top::after{
-  content:'';position:absolute;top:0;right:0;width:4px;height:100%;
-  background:var(--green);border-radius:0 6px 6px 0;transition:var(--transition)
-}
-.cfg-card.inactive .cfg-top::after{background:var(--red)}
-.cfg-head{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  gap:8px;margin-bottom:12px;flex-wrap:wrap
-}
-.cfg-label{font-size:15.5px;font-weight:700;color:var(--text)}
-.cfg-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.proto-chip{
-  font-size:9px;padding:3px 10px;border-radius:8px;
-  font-weight:800;letter-spacing:0.02em
-}
-.pc-ws{background:rgba(91,141,239,0.06);color:var(--accent2)}
-.pc-xhttp{background:rgba(157,123,240,0.06);color:var(--purple-t)}
-.pc-ultra{background:rgba(31,184,126,0.06);color:var(--green-t)}
-.cfg-status{
-  display:flex;align-items:center;gap:5px;font-size:10px;
-  font-weight:700;padding:4px 12px;border-radius:20px;white-space:nowrap
-}
-.cfg-status.ok{background:rgba(31,184,126,0.06);color:var(--green-t)}
-.cfg-status.no{background:rgba(239,68,68,0.06);color:var(--red-t)}
-.cfg-usage{margin-bottom:4px}
-.ubar{
-  height:5px;border-radius:4px;
-  background:rgba(91,141,239,0.04);overflow:hidden;margin-bottom:5px
-}
-.ubar-f{height:100%;border-radius:4px;transition:width 0.6s ease}
-.utxt{font-size:10px;color:var(--text-mid);display:flex;justify-content:space-between}
-
-/* ── خط جداکننده ── */
-.cfg-tear{
-  position:relative;height:0;border-top:1.5px dashed var(--glass-border);margin:0 24px
-}
-.cfg-tear::before,.cfg-tear::after{
-  content:'';position:absolute;top:50%;width:22px;height:22px;
-  border-radius:50%;background:var(--bg);
-  transform:translateY(-50%);border:1px solid var(--glass-border)
-}
-.cfg-tear::before{right:-32px}
-.cfg-tear::after{left:-32px}
-
-.cfg-bottom{padding:16px 24px 20px;position:relative;z-index:1}
-.cfg-link-toggle{
-  width:100%;display:flex;align-items:center;justify-content:space-between;
-  gap:10px;background:rgba(91,141,239,0.02);border:1px dashed var(--glass-border);
-  border-radius:12px;padding:11px 16px;cursor:pointer;
-  font-family:inherit;color:var(--text-mid);font-size:11.5px;font-weight:600;
-  transition:var(--transition)
-}
-.cfg-link-toggle:hover{background:rgba(91,141,239,0.04);border-color:rgba(91,141,239,0.15);color:var(--accent2)}
-.cfg-link-toggle .ltl{display:flex;align-items:center;gap:7px}
-.cfg-link-toggle i.ti-chevron-down{transition:transform 0.3s ease}
-.cfg-link-toggle.open i.ti-chevron-down{transform:rotate(180deg)}
-.cfg-vless-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.35s ease}
-.cfg-vless-wrap.open{grid-template-rows:1fr}
-.cfg-vless-inner{overflow:hidden}
-.cfg-vless{
-  background:rgba(0,0,0,0.12);border:1px solid var(--glass-border);
-  border-radius:11px;padding:12px 14px;
-  font-size:9.8px;font-family:ui-monospace,monospace;
-  color:var(--accent2);word-break:break-all;line-height:1.8;
-  margin-top:10px;max-height:100px;overflow-y:auto
-}
-[data-theme="light"] .cfg-vless{background:rgba(46,99,214,0.02)}
-.cfg-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+/* ── نوار مصرف ── */
+.usage-wrap{margin:14px 0 4px}
+.usage-top{display:flex;justify-content:space-between;font-size:12px;color:var(--text-mid);margin-bottom:4px}
+.usage-bar{height:6px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden}
+.usage-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),#7a5cf0);transition:width .6s ease}
+.usage-percent{text-align:left;font-size:11px;color:var(--text-dim);margin-top:4px;direction:ltr}
 
 /* ── دکمه‌ها ── */
-.btn{
-  font-family:inherit;font-size:11.5px;font-weight:700;
-  border-radius:12px;padding:8px 16px;cursor:pointer;
-  display:inline-flex;align-items:center;gap:5px;
-  border:none;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap
-}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{font-family:inherit;font-size:11.5px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:.2s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#7a5cf0);color:#fff;box-shadow:0 2px 12px rgba(91,141,239,0.15)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(91,141,239,0.2)}
+.btn-outline{background:transparent;border:1px solid var(--card-border);color:var(--text-mid)}
+.btn-outline:hover{background:rgba(91,141,239,0.04);color:var(--accent2)}
 .btn i{font-size:13px}
-.btn-p{
-  background:linear-gradient(135deg,var(--accent),#7a5cf0);
-  color:#fff;box-shadow:0 4px 20px rgba(91,141,239,0.15)
-}
-.btn-p:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 30px rgba(91,141,239,0.25)}
-.btn-p:active{transform:scale(0.96)}
-.btn-g{
-  background:rgba(91,141,239,0.03);color:var(--accent2);
-  border:1px solid rgba(91,141,239,0.05)
-}
-.btn-g:hover{background:rgba(91,141,239,0.06);border-color:rgba(91,141,239,0.12)}
-.btn-pur{
-  background:rgba(157,123,240,0.03);color:var(--purple-t);
-  border:1px solid rgba(157,123,240,0.06)
-}
-.btn-pur:hover{background:rgba(157,123,240,0.06);border-color:rgba(157,123,240,0.14)}
-.conn-chip{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:9.5px;padding:3px 10px;border-radius:20px;
-  background:rgba(31,184,126,0.05);color:var(--green-t);font-weight:700
-}
-.dot{
-  width:5px;height:5px;border-radius:50%;background:var(--green);
-  display:inline-block;animation:pulse 2s infinite
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
 
-/* ── صفحه‌ی قفل ── */
-.lock-stage{display:flex;align-items:center;justify-content:center;min-height:78vh;padding:20px 0}
-.lock-card{
-  background:var(--glass);backdrop-filter:blur(32px);
-  border:1px solid var(--glass-border);border-radius:30px;
-  padding:0;text-align:center;max-width:420px;width:100%;
-  box-shadow:var(--glass-shadow);overflow:hidden;position:relative
-}
-.lock-banner{
-  background:linear-gradient(150deg,rgba(91,141,239,0.04),rgba(91,141,239,0.01) 70%);
-  padding:44px 34px 28px;position:relative
-}
-.lock-shield{
-  width:72px;height:72px;border-radius:22px;
-  background:var(--glass);border:1px solid var(--glass-border);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 18px;position:relative;box-shadow:var(--glass-shadow)
-}
-.lock-shield::after{
-  content:'';position:absolute;inset:-8px;border-radius:26px;
-  border:1px solid var(--glass-border);animation:breathe 3s ease-in-out infinite
-}
-@keyframes breathe{0%,100%{transform:scale(1);opacity:0.4}50%{transform:scale(1.08);opacity:0}}
-.lock-shield i{font-size:32px;color:var(--accent2)}
-.lock-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-0.01em}
-.lock-sub{font-size:12px;color:var(--text-mid);line-height:1.8}
-.lock-form{padding:28px 34px 34px}
-.lock-field{position:relative;margin-bottom:14px}
-.lock-inp{
-  width:100%;padding:14px 48px 14px 48px;border-radius:14px;
-  border:1.5px solid var(--glass-border);
-  background:rgba(255,255,255,0.01);
-  color:var(--text);font-family:inherit;font-size:14px;outline:none;
-  text-align:center;letter-spacing:0.14em;transition:var(--transition)
-}
-.lock-inp:focus{border-color:var(--accent);box-shadow:0 0 0 5px rgba(91,141,239,0.03)}
-.lock-eye{
-  position:absolute;left:13px;top:50%;transform:translateY(-50%);
-  background:none;border:none;color:var(--text-dim);
-  cursor:pointer;font-size:16px;padding:4px;display:flex
-}
-.lock-eye:hover{color:var(--accent2)}
-.lock-lockicon{
-  position:absolute;right:14px;top:50%;transform:translateY(-50%);
-  color:var(--text-dim);font-size:15px;pointer-events:none
-}
-.lock-err{color:var(--red-t);font-size:11.5px;margin-bottom:10px;min-height:16px;display:flex;align-items:center;justify-content:center;gap:5px}
-.lock-btn{width:100%;justify-content:center;padding:14px;font-size:13px;border-radius:14px}
-.lock-footer{
-  padding:14px 34px;border-top:1px solid var(--glass-border);
-  font-size:10px;color:var(--text-dim);display:flex;align-items:center;justify-content:center;gap:6px
-}
+/* ── لیست کانفیگ‌ها ── */
+.configs-title{font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.06em}
+.configs-title i{color:var(--accent);font-size:14px}
 
-.empty-state{text-align:center;padding:90px 20px;color:var(--text-mid)}
-.empty-state i{font-size:44px;display:block;margin-bottom:14px;opacity:0.2}
+.config-item{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;transition:.2s;flex-wrap:wrap}
+.config-item:hover{border-color:rgba(91,141,239,0.12)}
+.config-info{display:flex;align-items:center;gap:8px;flex:1;min-width:180px;flex-wrap:wrap}
+.config-proto{font-size:9px;font-weight:800;padding:2px 8px;border-radius:4px;background:rgba(91,141,239,0.06);color:var(--accent2);white-space:nowrap}
+.config-proto.tcp{background:rgba(16,185,129,0.06);color:var(--green-t)}
+.config-proto.ws{background:rgba(245,158,11,0.06);color:var(--amber-t)}
+.config-proto.httpupgrade{background:rgba(157,123,240,0.06);color:var(--purple-t)}
+.config-proto.xhttp{background:rgba(157,123,240,0.06);color:var(--purple-t)}
+.config-flag{font-size:16px}
+.config-name{font-size:12px;font-weight:600;color:var(--text)}
+.config-actions{display:flex;gap:4px}
+.config-actions .btn{padding:4px 8px;font-size:10px;border-radius:6px;background:transparent;border:1px solid var(--card-border);color:var(--text-dim)}
+.config-actions .btn:hover{background:rgba(91,141,239,0.06);color:var(--accent2)}
 
-.toast{
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(50px);
-  background:var(--glass);backdrop-filter:blur(20px);
-  border:1px solid var(--glass-border);color:var(--text);
-  border-radius:16px;padding:12px 24px;font-size:12.5px;font-weight:600;
-  opacity:0;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  z-index:999;pointer-events:none;display:flex;align-items:center;gap:8px;
-  box-shadow:var(--glass-shadow);white-space:nowrap
-}
+/* ── فوتر ── */
+.footer{text-align:center;margin-top:24px;font-size:10px;color:var(--text-dim)}
+.footer a{color:var(--accent2);font-weight:600;text-decoration:none}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(50px);background:var(--card);border:1px solid var(--card-border);color:var(--text);border-radius:10px;padding:10px 20px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:rgba(31,184,126,0.15);background:rgba(31,184,126,0.03);color:var(--green-t)}
+.toast.ok{border-color:rgba(31,184,126,0.2);color:var(--green-t)}
 
-.qr-modal{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,0.65);z-index:600;
-  align-items:center;justify-content:center;
-  backdrop-filter:blur(10px);padding:20px
+/* ── پاسخگو ── */
+@media(max-width:500px){
+  .sub-table{font-size:11px}
+  .config-item{flex-direction:column;align-items:stretch}
+  .config-actions{justify-content:flex-start;margin-top:4px}
+  .actions{flex-direction:column}
+  .btn{justify-content:center}
+  .sub-card{padding:16px}
 }
-.qr-modal.open{display:flex}
-.qr-box{
-  background:var(--glass);backdrop-filter:blur(32px);
-  border:1px solid var(--glass-border);border-radius:28px;
-  padding:30px;text-align:center;max-width:380px;width:100%;
-  box-shadow:var(--glass-shadow);animation:fadeSlide 0.5s ease
-}
-.qr-title{font-size:14px;font-weight:800;margin-bottom:16px;color:var(--text)}
-.qr-img{border-radius:18px;overflow:hidden;margin-bottom:16px}
-.qr-img img{width:100%;display:block;background:#fff;padding:14px;border-radius:18px}
-
-/* ── بخش نمودارها ── */
-.charts-section{
-  margin-top:24px;
-  margin-bottom:20px;
-}
-.charts-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-.chart-card{
-  background:var(--glass);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border:1px solid var(--glass-border);
-  border-radius:22px;
-  padding:20px 22px 18px;
-  transition:var(--transition);
-  box-shadow:var(--glass-shadow);
-}
-.chart-card:hover{
-  border-color:rgba(91,141,239,0.12);
-  transform:translateY(-2px);
-}
-.chart-header{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:11px;
-  font-weight:700;
-  color:var(--text-mid);
-  text-transform:uppercase;
-  letter-spacing:0.06em;
-  margin-bottom:14px;
-}
-.chart-header i{
-  color:var(--accent);
-  font-size:16px;
-}
-.chart-container{
-  position:relative;
-  height:220px;
-}
-
-/* ── دکمه‌ی کشویی پشتیبانی ── */
-.support-dropdown{
-  position:relative;
-  margin:0 auto;
-  width:100%;
-  max-width:320px;
-  z-index:20;
-  direction:rtl;
-}
-.support-toggle{
-  width:100%;
-  padding:12px 20px;
-  background:var(--glass);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-  border:1px solid var(--glass-border);
-  border-radius:16px;
-  color:var(--text-mid);
-  font-family:inherit;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:var(--glass-shadow);
-}
-.support-toggle:hover{
-  background:rgba(91,141,239,0.04);
-  border-color:rgba(91,141,239,0.12);
-  color:var(--accent2);
-  transform:translateY(-2px);
-}
-.support-toggle i:first-child{
-  color:var(--accent);
-  font-size:18px;
-}
-.support-toggle #supportArrow{
-  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  font-size:16px;
-  margin-right:auto;
-}
-.support-toggle.open #supportArrow{
-  transform:rotate(180deg);
-}
-.support-menu{
-  display:grid;
-  grid-template-rows:0fr;
-  transition:grid-template-rows 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  overflow:hidden;
-  margin-top:0;
-  opacity:0;
-  transform:translateY(-10px) scale(0.96);
-  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-.support-menu.open{
-  grid-template-rows:1fr;
-  opacity:1;
-  transform:translateY(0) scale(1);
-}
-.support-menu-inner{
-  overflow:hidden;
-  background:var(--glass);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-  border:1px solid var(--glass-border);
-  border-radius:16px;
-  padding:8px 6px;
-  margin-top:8px;
-  box-shadow:var(--glass-shadow);
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-}
-.support-item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 16px;
-  border-radius:12px;
-  color:var(--text-mid);
-  font-size:12.5px;
-  transition:all 0.25s;
-  cursor:default;
-}
-.support-item i{
-  color:var(--accent2);
-  font-size:17px;
-  width:22px;
-  text-align:center;
-  flex-shrink:0;
-}
-.support-item a{
-  color:var(--text);
-  text-decoration:none;
-  font-weight:600;
-  transition:all 0.25s;
-  flex:1;
-}
-.support-item a:hover{
-  color:var(--accent2);
-  transform:translateX(-4px);
-}
-.support-item span{
-  color:var(--text-dim);
-  font-weight:500;
-  flex:1;
-}
-.support-divider{
-  height:1px;
-  background:var(--glass-border);
-  margin:4px 12px;
-}
-.support-version{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:8px 0 4px;
-  font-size:10px;
-  color:var(--text-dim);
-  font-weight:500;
-}
-.support-version i{
-  color:var(--accent);
-  font-size:12px;
-}
-
-@media(max-width:700px){
-  .charts-row{
-    grid-template-columns:1fr;
-    gap:14px;
-  }
-  .chart-container{
-    height:200px;
-  }
-}
-@media(max-width:560px){
-  .stats-bar{grid-template-columns:1fr 1fr}
-  .stats-bar .stat-card:nth-child(3){grid-column:1/-1}
-  .sub-name{font-size:22px}
-  .wrap{padding:16px 12px 50px}
-  .lock-banner{padding:32px 22px 22px}
-  .lock-form{padding:20px 22px 26px}
-  .sub-info{padding:22px 18px 18px}
-  .cfg-top{padding:16px 18px 14px}
-  .cfg-bottom{padding:14px 18px 16px}
-  .cfg-tear{margin:0 18px}
-  .cfg-tear::before{right:-26px}
-  .cfg-tear::after{left:-26px}
-  .datetime-row{font-size:10px;padding:6px 10px}
-  #live-datetime{min-width:60px}
-  #live-date{min-width:80px}
-  .sub-actions-row .btn{
-    flex:1 1 100%;
-    min-width:unset;
-  }
-  .support-dropdown{max-width:100%}
-  .support-toggle{padding:10px 16px;font-size:12px;border-radius:14px}
-  .support-item{padding:8px 14px;font-size:11.5px}
-  .support-item i{font-size:15px;width:20px}
-}
-@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<div class="bg-fx"></div>
-<div class="grid-fx"></div>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
-<div class="particles">
-  <span class="particle"></span><span class="particle"></span>
-  <span class="particle"></span><span class="particle"></span>
-  <span class="particle"></span><span class="particle"></span>
-  <span class="particle"></span><span class="particle"></span>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<div class="qr-modal" id="qr-modal" onclick="this.classList.remove('open')">
-  <div class="qr-box" onclick="event.stopPropagation()">
-    <div class="qr-title" id="qr-label">QR Code</div>
-    <div class="qr-img"><img id="qr-img" src="" alt="QR"></div>
-    <button class="btn btn-g" style="width:100%;justify-content:center" onclick="document.getElementById('qr-modal').classList.remove('open')"><i class="ti ti-x"></i> بستن</button>
-  </div>
-</div>
-
 <div class="wrap">
-  <div class="top">
+  <!-- هدر -->
+  <div class="header">
     <div class="brand">
       <div class="brand-img"><img src="data:image/png;base64,__LOGO_B64__" alt="X4G"></div>
       <div>
         <div class="brand-name">X4G</div>
-        <div class="brand-sub">پنل مدیریت پیشرفته</div>
+        <div class="brand-sub">پنل اشتراک</div>
       </div>
     </div>
-    <div class="top-actions">
-      <button class="icon-btn" id="refresh-btn" onclick="manualRefresh()" title="رفرش دستی">
-        <i class="ti ti-refresh" id="refresh-icon"></i>
-      </button>
-      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="تغییر تم">
-        <i class="ti ti-sun" id="theme-icon"></i>
-      </button>
+    <button class="theme-btn" onclick="toggleTheme()"><i class="ti ti-sun" id="theme-icon"></i></button>
+  </div>
+
+  <!-- کارت اشتراک -->
+  <div class="sub-card" id="sub-card">
+    <div class="sub-id"><i class="ti ti-id-badge"></i> شناسه اشتراک <span id="sub-id">—</span></div>
+    
+    <table class="sub-table" id="sub-table">
+      <tr><td>ایمیل</td><td id="email">—</td></tr>
+      <tr><td>وضعیت</td><td id="status" class="status-active">—</td></tr>
+      <tr><td>دانلود</td><td id="downloaded">—</td></tr>
+      <tr><td>آپلود</td><td id="uploaded">—</td></tr>
+      <tr><td>مصرف</td><td id="usage">—</td></tr>
+      <tr><td>سهمیه کل</td><td id="total-quota">—</td></tr>
+      <tr><td>باقی‌مانده</td><td id="remaining">—</td></tr>
+      <tr><td>آخرین اتصال</td><td id="last-online">—</td></tr>
+      <tr><td>انقضا</td><td id="expiry">—</td></tr>
+    </table>
+
+    <div class="usage-wrap">
+      <div class="usage-top">
+        <span id="usage-text">—</span>
+        <span id="remaining-text">—</span>
+      </div>
+      <div class="usage-bar"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
+      <div class="usage-percent" id="usage-percent">0%</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="copySubUrl()"><i class="ti ti-copy"></i> کپی لینک اشتراک</button>
+      <button class="btn btn-primary" onclick="copyAllConfigs()"><i class="ti ti-clipboard-copy"></i> کپی همه‌ی کانفیگ‌ها</button>
     </div>
   </div>
 
-  <div id="root">
-    <div class="empty-state"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>در حال بارگذاری...</div>
-  </div>
+  <!-- لیست کانفیگ‌ها -->
+  <div class="configs-title"><i class="ti ti-link"></i> کانفیگ‌های اشتراک</div>
+  <div id="config-list"></div>
 
-  <!-- دکمه‌ی کشویی پشتیبانی (به‌عنوان فوتر) -->
-  <div class="support-dropdown" id="supportDropdown" style="margin-top:20px;">
-    <button class="support-toggle" onclick="toggleSupport()">
-      <i class="ti ti-headset"></i> پشتیبانی
-      <i class="ti ti-chevron-down" id="supportArrow"></i>
-    </button>
-    <div class="support-menu" id="supportMenu">
-      <div class="support-menu-inner">
-        <div class="support-item">
-          <i class="ti ti-brand-telegram"></i>
-          <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a>
-        </div>
-        <div class="support-item">
-          <i class="ti ti-mail"></i>
-          <span>support@x4g.com</span>
-        </div>
-        <div class="support-item">
-          <i class="ti ti-brand-github"></i>
-          <a href="https://github.com/x4gKing" target="_blank">github.com/x4gKing</a>
-        </div>
-        <div class="support-divider"></div>
-        <div class="support-version">
-          <i class="ti ti-rocket"></i> X4G v9.5
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- فوتر -->
+  <div class="footer">پشتیبانی: <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a> · X4G v9.5</div>
 </div>
 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <script>
-const UUID_KEY='__UUID_KEY__';
-let savedPw='';
+const UUID_KEY = '__UUID_KEY__';
+let savedPw = '';
 
 // ── تم ──
 let isDark = localStorage.getItem('x4g-pub-theme') !== 'light';
@@ -3378,92 +2830,19 @@ function toggleTheme(){
   isDark = !isDark;
   localStorage.setItem('x4g-pub-theme', isDark ? 'dark' : 'light');
   applyTheme(isDark);
-  setTimeout(() => {
-    const links = window._x4gLinks || [];
-    if (links.length > 0) {
-      renderCharts(links);
-    }
-  }, 100);
 }
 applyTheme(isDark);
 
-// ── تاریخ و زمان زنده ──
-let datetimeInterval = null;
-
-function updateDateTime() {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('fa-IR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-  const dateStr = now.toLocaleDateString('fa-IR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
-  
-  const timeEl = document.getElementById('live-datetime');
-  const dateEl = document.getElementById('live-date');
-  if (timeEl) timeEl.textContent = timeStr;
-  if (dateEl) dateEl.textContent = dateStr;
-}
-
-function startDateTimeTimer() {
-  updateDateTime();
-  if (datetimeInterval) clearInterval(datetimeInterval);
-  datetimeInterval = setInterval(updateDateTime, 1000);
-}
-
-function stopDateTimeTimer() {
-  if (datetimeInterval) {
-    clearInterval(datetimeInterval);
-    datetimeInterval = null;
-  }
-}
-
-// ── رفرش دستی ──
-function manualRefresh() {
-  const icon = document.getElementById('refresh-icon');
-  icon.style.animation = 'spin 0.8s linear 1';
-  setTimeout(() => { icon.style.animation = ''; }, 800);
-  
-  updateDateTime();
-  if (typeof autoRefresh === 'function') autoRefresh();
-  toast('🔄 رفرش شد', 'ok');
-}
-
-// ── دکمه‌ی کشویی پشتیبانی ──
-function toggleSupport() {
-  const menu = document.getElementById('supportMenu');
-  const btn = document.getElementById('supportDropdown').querySelector('.support-toggle');
-  const isOpen = menu.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
-}
-
-document.addEventListener('click', function(e) {
-  const dropdown = document.getElementById('supportDropdown');
-  if (!dropdown.contains(e.target)) {
-    const menu = document.getElementById('supportMenu');
-    const btn = dropdown.querySelector('.support-toggle');
-    if (menu.classList.contains('open')) {
-      menu.classList.remove('open');
-      btn.classList.remove('open');
-    }
-  }
-});
-
-// ── ابزارها ──
+// ── Toast ──
 function toast(msg, type=''){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' ' + type : '');
-  setTimeout(() => t.classList.remove('show'), 2400);
+  setTimeout(() => t.classList.remove('show'), 2200);
 }
-function esc(s){
-  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-}
+
+// ── ابزارها ──
+function esc(s){ return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 function fmtB(b){
   if(!b || b === 0) return '0 B';
   if(b < 1024) return b + ' B';
@@ -3471,32 +2850,21 @@ function fmtB(b){
   if(b < 1024**3) return (b/1024**2).toFixed(2) + ' MB';
   return (b/1024**3).toFixed(2) + ' GB';
 }
-function toFa(n){
-  return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-}
+function toFa(n){ return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
 function protoChip(p){
-  if(p === 'xhttp-stream-one') return '<span class="proto-chip pc-ultra"><i class="ti ti-bolt"></i> XHTTP ULTRA</span>';
-  if(p && p.startsWith('xhttp')) return '<span class="proto-chip pc-xhttp">' + esc(p) + '</span>';
-  return '<span class="proto-chip pc-ws">VLESS · WS</span>';
+  const m = {
+    'vless-ws': ['WS', 'ws'],
+    'xhttp-packet-up': ['XHTTP', 'xhttp'],
+    'xhttp-stream-up': ['XHTTP', 'xhttp'],
+    'xhttp-stream-one': ['XHTTP ULTRA', 'xhttp'],
+    'tcp': ['TCP', 'tcp'],
+    'httpupgrade': ['HTTPUPGRADE', 'httpupgrade']
+  };
+  const v = m[p] || m['vless-ws'];
+  return `<span class="config-proto ${v[1]}">${v[0]}</span>`;
 }
 
-// ── QR ──
-function showQR(label, link){
-  document.getElementById('qr-label').textContent = label;
-  document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(link);
-  document.getElementById('qr-modal').classList.add('open');
-}
-
-// ── نمایش/مخفی ──
-function toggleLink(i){
-  const wrap = document.getElementById('vw-' + i);
-  const btn = document.getElementById('vt-' + i);
-  const open = wrap.classList.toggle('open');
-  btn.classList.toggle('open', open);
-  btn.querySelector('.ltl span').textContent = open ? 'پنهان کردن لینک' : 'نمایش لینک کانفیگ';
-}
-
-// ── بارگذاری ──
+// ── بارگذاری داده ──
 async function loadData(pw = ''){
   const url = '/api/public/sub/' + UUID_KEY + (pw ? '?pw=' + encodeURIComponent(pw) : '');
   const r = await fetch(url);
@@ -3505,37 +2873,19 @@ async function loadData(pw = ''){
 
 // ── صفحه‌ی قفل ──
 function renderLock(name, errMsg = ''){
-  document.getElementById('root').innerHTML = `
-    <div class="lock-stage">
-      <div class="lock-card">
-        <div class="lock-banner">
-          <div class="lock-shield"><i class="ti ti-shield-lock"></i></div>
-          <div class="lock-title">${esc(name)}</div>
-          <div class="lock-sub">این گروه با رمز محافظت شده. برای دیدن کانفیگ‌ها رمز رو وارد کنید.</div>
-        </div>
-        <div class="lock-form">
-          <div class="lock-err" id="lock-err">${errMsg ? '<i class="ti ti-alert-circle"></i> ' + esc(errMsg) : ''}</div>
-          <div class="lock-field">
-            <i class="ti ti-lock lock-lockicon"></i>
-            <input class="lock-inp" type="password" id="lock-pw" placeholder="••••••••" autofocus>
-            <button class="lock-eye" type="button" onclick="togglePwVis()"><i class="ti ti-eye" id="lock-eye-icon"></i></button>
-          </div>
-          <button class="btn btn-p lock-btn" onclick="submitLock()"><i class="ti ti-lock-open"></i> ورود به گروه</button>
-        </div>
-        <div class="lock-footer"><i class="ti ti-shield-check"></i> اتصال شما رمزنگاری‌شده است</div>
+  document.getElementById('sub-card').innerHTML = `
+    <div style="text-align:center;padding:30px 10px">
+      <div style="font-size:32px;margin-bottom:12px">🔒</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:6px">${esc(name)}</div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:16px">این گروه با رمز محافظت شده است</div>
+      ${errMsg ? `<div style="color:var(--red-t);font-size:12px;margin-bottom:10px">${esc(errMsg)}</div>` : ''}
+      <div style="display:flex;gap:8px;max-width:300px;margin:0 auto">
+        <input type="password" id="lock-pw" placeholder="رمز را وارد کنید" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--card-border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;outline:none">
+        <button class="btn btn-primary" onclick="submitLock()"><i class="ti ti-lock-open"></i> ورود</button>
       </div>
     </div>
   `;
-  const inp = document.getElementById('lock-pw');
-  inp.addEventListener('keydown', e => { if(e.key === 'Enter') submitLock(); });
-}
-
-function togglePwVis(){
-  const inp = document.getElementById('lock-pw');
-  const icon = document.getElementById('lock-eye-icon');
-  const toText = inp.type === 'password';
-  inp.type = toText ? 'text' : 'password';
-  icon.className = 'ti ' + (toText ? 'ti-eye-off' : 'ti-eye');
+  document.getElementById('lock-pw').addEventListener('keydown', e => { if(e.key === 'Enter') submitLock(); });
 }
 
 async function submitLock(){
@@ -3547,168 +2897,6 @@ async function submitLock(){
   }
   savedPw = pw;
   renderContent(data);
-}
-
-// ── رسم نمودارها با داده‌های دقیق ──
-async function renderCharts(linksData) {
-  // ── نمودار دونات (سهم مصرف هر کانفیگ) ──
-  const donutCtx = document.getElementById('donutChart');
-  if (!donutCtx) return;
-  
-  if (window._donutChart) {
-    window._donutChart.destroy();
-  }
-  
-  const labels = linksData.map(l => l.label || 'بدون نام');
-  const values = linksData.map(l => l.used_bytes || 0);
-  const colors = [
-    '#5b8def', '#7aa3ff', '#3FD79C', '#F9C988', 
-    '#BCA4F7', '#FB8585', '#4DD0E1', '#FFB74D'
-  ];
-  
-  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-  const textColor = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
-  
-  window._donutChart = new Chart(donutCtx, {
-    type: 'doughnut',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: colors.slice(0, values.length),
-        borderColor: isDark ? '#05080f' : '#eef2f8',
-        borderWidth: 2,
-        borderRadius: 4,
-        spacing: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '65%',
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: textColor,
-            font: { family: 'Vazirmatn', size: 9, weight: '600' },
-            padding: 10,
-            usePointStyle: true,
-            pointStyle: 'circle',
-            boxWidth: 10,
-            boxHeight: 10
-          }
-        },
-        tooltip: {
-          backgroundColor: isDark ? 'rgba(5,8,15,0.9)' : 'rgba(238,242,248,0.9)',
-          borderColor: 'rgba(91,141,239,0.15)',
-          borderWidth: 1,
-          titleFont: { family: 'Vazirmatn', size: 11, weight: '700' },
-          bodyFont: { family: 'Vazirmatn', size: 11 },
-          callbacks: {
-            label: function(context) {
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
-              const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
-              return context.label + ': ' + fmtB(context.parsed) + ' (' + percentage + '%)';
-            }
-          }
-        }
-      }
-    }
-  });
-
-  // ── نمودار دایره‌ای ۲۴ ساعته ──
-  const pieCtx = document.getElementById('pieChart');
-  if (!pieCtx) return;
-  
-  if (window._pieChart) {
-    window._pieChart.destroy();
-  }
-  
-  // دریافت داده‌های واقعی از API
-  let hourlyData = [];
-  try {
-    const response = await fetch('/stats/hourly');
-    if (response.ok) {
-      const data = await response.json();
-      hourlyData = data.hourly || [];
-    } else {
-      console.warn('دریافت داده‌های ساعتی با خطا مواجه شد');
-    }
-  } catch (e) {
-    console.warn('خطا در دریافت داده‌های ساعتی:', e);
-  }
-  
-  // اگر داده‌ای وجود نداشت، پیام خطا نمایش داده می‌شود
-  if (!hourlyData || hourlyData.length === 0) {
-    document.getElementById('pieChart').parentElement.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-mid);font-size:12px;">
-        <i class="ti ti-alert-circle" style="margin-left:6px;"></i>
-        داده‌ای برای نمایش وجود ندارد
-      </div>
-    `;
-    return;
-  }
-  
-  // آماده‌سازی داده‌ها برای نمودار دایره‌ای (۲۴ ساعت)
-  const pieLabels = hourlyData.map(d => d.hour || '--:--');
-  const pieValues = hourlyData.map(d => d.value || 0);
-  const pieColors = [
-    '#5b8def', '#7aa3ff', '#3FD79C', '#F9C988', 
-    '#BCA4F7', '#FB8585', '#4DD0E1', '#FFB74D',
-    '#5b8def', '#7aa3ff', '#3FD79C', '#F9C988',
-    '#BCA4F7', '#FB8585', '#4DD0E1', '#FFB74D',
-    '#5b8def', '#7aa3ff', '#3FD79C', '#F9C988',
-    '#BCA4F7', '#FB8585', '#4DD0E1', '#FFB74D'
-  ];
-  
-  window._pieChart = new Chart(pieCtx, {
-    type: 'pie',
-    data: {
-      labels: pieLabels,
-      datasets: [{
-        data: pieValues,
-        backgroundColor: pieColors.slice(0, pieValues.length),
-        borderColor: isDark ? '#05080f' : '#eef2f8',
-        borderWidth: 1.5,
-        borderRadius: 3,
-        spacing: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: textColor,
-            font: { family: 'Vazirmatn', size: 8, weight: '600' },
-            padding: 8,
-            usePointStyle: true,
-            pointStyle: 'circle',
-            boxWidth: 8,
-            boxHeight: 8,
-            maxHeight: 60
-          }
-        },
-        tooltip: {
-          backgroundColor: isDark ? 'rgba(5,8,15,0.9)' : 'rgba(238,242,248,0.9)',
-          borderColor: 'rgba(91,141,239,0.15)',
-          borderWidth: 1,
-          titleFont: { family: 'Vazirmatn', size: 10, weight: '700' },
-          bodyFont: { family: 'Vazirmatn', size: 10 },
-          callbacks: {
-            label: function(context) {
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
-              const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
-              return context.label + ': ' + context.parsed.toFixed(1) + ' MB (' + percentage + '%)';
-            }
-          }
-        }
-      }
-    }
-  });
 }
 
 // ── رندر ──
@@ -3723,148 +2911,80 @@ function renderContent(d){
     vless: l.vless_link,
     sub: l.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : ''),
     label: l.label,
-    used_bytes: l.used_bytes || 0,
+    proto: l.protocol || 'vless-ws',
+    flag: '🇳🇱'
   }));
 
-  document.getElementById('root').innerHTML = `
-    <div class="sub-info">
-      <div class="sub-eyebrow"><i class="ti ti-folders"></i> گروه دسترسی</div>
-      <div class="sub-name">${esc(d.name)}</div>
-      ${d.desc ? `<div class="sub-desc">${esc(d.desc)}</div>` : ''}
-      
-      <div class="datetime-row" id="datetime-display">
-        <i class="ti ti-clock"></i>
-        <span id="live-datetime">--:--:--</span>
-        <span class="date-separator">•</span>
-        <span id="live-date">----/--/--</span>
-      </div>
-      
-      <div class="sub-meta-row"><i class="ti ti-clock"></i> آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}</div>
-      
-      <div class="sub-sub-box">
-        <span class="sub-sub-url">${esc(subUrl)}</span>
-      </div>
-      
-      <div class="sub-actions-row">
-        <button class="btn btn-pur" 
-          onclick="navigator.clipboard.writeText(window._x4gSubUrl).then(()=>toast('لینک ساب کپی شد ✓','ok'))">
-          <i class="ti ti-copy"></i> کپی لینک ساب
-        </button>
-        <button class="btn btn-g" 
-          onclick="showQR(window._x4gSubName + ' — کل گروه', window._x4gSubUrl)">
-          <i class="ti ti-qrcode"></i> QR کل
-        </button>
-      </div>
-    </div>
+  // محاسبه درصد مصرف
+  const totalBytes = d.links.reduce((s, l) => s + (l.limit_bytes || 0), 0);
+  const usedBytes = d.links.reduce((s, l) => s + (l.used_bytes || 0), 0);
+  const pct = totalBytes > 0 ? Math.min(100, (usedBytes / totalBytes) * 100) : 0;
 
-    <div class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-label">کانفیگ‌های فعال</div>
-        <div class="stat-val">${toFa(activeCount)}</div>
-        <div class="stat-sub">از ${toFa(d.links.length)} کانفیگ</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">اتصالات زنده</div>
-        <div class="stat-val">${toFa(d.active_connections)}</div>
-        <div class="stat-sub" style="color:var(--green-t);display:flex;align-items:center;gap:4px"><span class="dot"></span> آنلاین</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">کل مصرف</div>
-        <div class="stat-val" style="font-size:17px;margin-top:3px">${esc(d.total_used_fmt)}</div>
-        <div class="stat-sub">همه کانفیگ‌ها</div>
-      </div>
-    </div>
+  // پر کردن جدول
+  document.getElementById('sub-id').textContent = d.id || UUID_KEY;
+  document.getElementById('email').textContent = d.email || '—';
+  const statusEl = document.getElementById('status');
+  statusEl.textContent = d.status || 'فعال';
+  statusEl.className = d.status === 'فعال' ? 'status-active' : 'status-expired';
+  document.getElementById('downloaded').textContent = d.downloaded || fmtB(d.download_bytes || 0);
+  document.getElementById('uploaded').textContent = d.uploaded || fmtB(d.upload_bytes || 0);
+  document.getElementById('usage').textContent = d.usage || fmtB(usedBytes);
+  document.getElementById('total-quota').textContent = d.total_quota || fmtB(totalBytes);
+  document.getElementById('remaining').textContent = d.remaining || fmtB(totalBytes - usedBytes);
+  document.getElementById('last-online').textContent = d.last_online || '—';
+  document.getElementById('expiry').textContent = d.expiry || 'بدون انقضا';
 
-    <div class="cfg-title"><i class="ti ti-link"></i> کانفیگ‌ها (${toFa(d.links.length)} عدد)</div>
-    <div class="cfg-grid">
-      ${d.links.map((l, i) => {
-        const pct = l.limit_bytes === 0 ? 0 : Math.min(100, (l.used_bytes / l.limit_bytes) * 100);
-        const bc = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--amber)' : 'var(--green)';
-        const lim = l.limit_bytes === 0 ? '∞' : fmtB(l.limit_bytes);
-        return `
-          <div class="cfg-card${l.active ? '' : ' inactive'}">
-            <div class="cfg-top">
-              <div class="cfg-head">
-                <div>
-                  <div class="cfg-label">${esc(l.label)}</div>
-                  <div class="cfg-badges">
-                    ${protoChip(l.protocol)}
-                    ${l.connections > 0 ? `<span class="conn-chip"><span class="dot"></span> ${toFa(l.connections)} اتصال</span>` : ''}
-                  </div>
-                </div>
-                <span class="cfg-status ${l.active ? 'ok' : 'no'}">${l.active ? '<i class="ti ti-circle-check"></i> فعال' : '<i class="ti ti-circle-x"></i> غیرفعال'}</span>
-              </div>
-              <div class="cfg-usage">
-                <div class="ubar"><div class="ubar-f" style="width:${pct}%;background:${bc}"></div></div>
-                <div class="utxt"><span>${esc(l.used_fmt)} مصرف شده</span><span>سهمیه: ${lim}</span></div>
-              </div>
-            </div>
-            <div class="cfg-tear"></div>
-            <div class="cfg-bottom">
-              <button class="cfg-link-toggle" id="vt-${i}" onclick="toggleLink(${i})">
-                <span class="ltl"><i class="ti ti-eye"></i> <span>نمایش لینک کانفیگ</span></span>
-                <i class="ti ti-chevron-down"></i>
-              </button>
-              <div class="cfg-vless-wrap" id="vw-${i}">
-                <div class="cfg-vless-inner">
-                  <div class="cfg-vless">${esc(l.vless_link)}</div>
-                </div>
-              </div>
-              <div class="cfg-actions">
-                <button class="btn btn-p"
-                  onclick="navigator.clipboard.writeText(window._x4gLinks[${i}].vless).then(()=>toast('لینک کپی شد ✓','ok'))">
-                  <i class="ti ti-copy"></i> کپی لینک
-                </button>
-                <button class="btn btn-g"
-                  onclick="showQR(window._x4gLinks[${i}].label, window._x4gLinks[${i}].vless)">
-                  <i class="ti ti-qrcode"></i> QR
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('')}
-    </div>
+  // نوار مصرف
+  document.getElementById('usage-text').textContent = fmtB(usedBytes) + ' / ' + fmtB(totalBytes);
+  document.getElementById('remaining-text').textContent = fmtB(totalBytes - usedBytes);
+  document.getElementById('usage-fill').style.width = pct + '%';
+  document.getElementById('usage-percent').textContent = pct.toFixed(1) + '%';
 
-    <!-- بخش نمودارها -->
-    <div class="charts-section">
-      <div class="charts-row">
-        <div class="chart-card">
-          <div class="chart-header">
-            <i class="ti ti-chart-donut"></i>
-            <span>سهم مصرف هر کانفیگ</span>
-          </div>
-          <div class="chart-container">
-            <canvas id="donutChart"></canvas>
-          </div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <i class="ti ti-chart-pie"></i>
-            <span>مصرف ۲۴ ساعت اخیر</span>
-          </div>
-          <div class="chart-container">
-            <canvas id="pieChart"></canvas>
-          </div>
-        </div>
+  // لیست کانفیگ‌ها
+  const list = document.getElementById('config-list');
+  if (!d.links.length) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:12px">هیچ کانفیگی در این گروه وجود ندارد</div>';
+    return;
+  }
+  list.innerHTML = d.links.map((l, i) => `
+    <div class="config-item">
+      <div class="config-info">
+        ${protoChip(l.protocol || 'vless-ws')}
+        <span class="config-flag">🇳🇱</span>
+        <span class="config-name">${esc(l.label || 'کانفیگ')}</span>
+      </div>
+      <div class="config-actions">
+        <button class="btn" onclick="copyConfig(${i})"><i class="ti ti-copy"></i> کپی</button>
+        <button class="btn" onclick="showQR(${i})"><i class="ti ti-qrcode"></i> QR</button>
       </div>
     </div>
-  `;
-  
-  // رسم نمودارها بعد از رندر محتوا
-  setTimeout(() => {
-    renderCharts(d.links);
-  }, 100);
-  
-  setTimeout(() => autoRefresh(), 30000);
+  `).join('');
 }
 
-// ── رفرش خودکار ──
-async function autoRefresh(){
-  try{
-    const data = await loadData(savedPw);
-    if(!data.locked) renderContent(data);
-  } catch(e) {}
+// ── توابع ──
+function copySubUrl(){
+  navigator.clipboard.writeText(window._x4gSubUrl).then(() => toast('لینک اشتراک کپی شد ✓', 'ok'));
+}
+
+function copyAllConfigs(){
+  const links = window._x4gLinks || [];
+  if(!links.length){ toast('کانفیگی وجود ندارد', ''); return; }
+  const text = links.map(l => l.vless).join('\n');
+  navigator.clipboard.writeText(text).then(() => toast('همه‌ی کانفیگ‌ها کپی شد ✓', 'ok'));
+}
+
+function copyConfig(i){
+  const links = window._x4gLinks || [];
+  if(!links[i]) return;
+  navigator.clipboard.writeText(links[i].vless).then(() => toast('لینک کانفیگ کپی شد ✓', 'ok'));
+}
+
+function showQR(i){
+  const links = window._x4gLinks || [];
+  if(!links[i]) return;
+  const label = links[i].label || 'کانفیگ';
+  const link = links[i].vless;
+  window.open('https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(link), '_blank');
 }
 
 // ── مقداردهی ──
@@ -3874,14 +2994,12 @@ async function init(){
     if(data.locked){ renderLock(data.name); return; }
     renderContent(data);
   } catch(e){
-    document.getElementById('root').innerHTML =
-      '<div class="empty-state" style="color:var(--red-t)"><i class="ti ti-alert-circle"></i>خطا در بارگذاری</div>';
+    document.getElementById('sub-card').innerHTML = `
+      <div style="text-align:center;padding:40px 10px;color:var(--red-t)"><i class="ti ti-alert-circle" style="font-size:32px;display:block;margin-bottom:10px"></i>خطا در بارگذاری</div>
+    `;
   }
 }
 
-// ── اجرا ──
-document.addEventListener('DOMContentLoaded', startDateTimeTimer);
-window.addEventListener('beforeunload', stopDateTimeTimer);
 init();
 </script>
 </body>
