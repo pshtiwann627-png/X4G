@@ -2624,7 +2624,7 @@ DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 # تابع صفحه پابلیک ساب - اصلاح‌شده و بدون باگ
 # =======================================================
 def get_public_page_html(uuid_key: str) -> str:
-    """صفحه پابلیک ساب — نسخه‌ی نهایی با منوی کشویی لیست کانفیگ‌ها"""
+    """صفحه پابلیک ساب — نسخه‌ی نهایی با ۴ دکمه در دو ردیف"""
     
     html = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -2713,8 +2713,8 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 .usage-percent{text-align:left;font-size:11px;color:var(--text-dim);margin-top:4px;direction:ltr}
 
 /* ── دکمه‌ها ── */
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.btn{font-family:inherit;font-size:11.5px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:.2s;white-space:nowrap}
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.btn{font-family:inherit;font-size:11.5px;font-weight:700;padding:9px 12px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.2s;white-space:nowrap;width:100%}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#7a5cf0);color:#fff;box-shadow:0 2px 12px rgba(91,141,239,0.15)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(91,141,239,0.2)}
 .btn-outline{background:transparent;border:1px solid var(--card-border);color:var(--text-mid)}
@@ -2722,12 +2722,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 .btn i{font-size:13px}
 
 /* ── منوی کشویی لیست کانفیگ‌ها ── */
-.configs-dropdown{position:relative;margin-top:16px;width:100%;z-index:10}
-.configs-toggle{width:100%;padding:10px 16px;background:var(--card);border:1px solid var(--card-border);border-radius:10px;color:var(--text-mid);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.25s}
-.configs-toggle:hover{background:rgba(91,141,239,0.04);border-color:rgba(91,141,239,0.12);color:var(--accent2)}
-.configs-toggle i:first-child{color:var(--accent);font-size:16px}
-.configs-toggle #configArrow{transition:transform .3s ease;font-size:14px;margin-right:auto}
-.configs-toggle.open #configArrow{transform:rotate(180deg)}
+.configs-dropdown{position:relative;margin-top:0;width:100%;z-index:10}
 .configs-menu{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;overflow:hidden;opacity:0;transform:translateY(-6px);transition:all .3s ease}
 .configs-menu.open{grid-template-rows:1fr;opacity:1;transform:translateY(0)}
 .configs-menu-inner{overflow:hidden;background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:8px;margin-top:6px}
@@ -2743,17 +2738,12 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 .config-flag{font-size:16px}
 .config-name{font-size:12px;font-weight:600;color:var(--text)}
 .config-actions{display:flex;gap:4px}
-.config-actions .btn{padding:4px 8px;font-size:10px;border-radius:6px;background:transparent;border:1px solid var(--card-border);color:var(--text-dim)}
+.config-actions .btn{padding:4px 8px;font-size:10px;border-radius:6px;background:transparent;border:1px solid var(--card-border);color:var(--text-dim);width:auto}
 .config-actions .btn:hover{background:rgba(91,141,239,0.06);color:var(--accent2)}
 .empty-configs{text-align:center;padding:16px;color:var(--text-dim);font-size:12px}
 
 /* ── دکمه‌ی کشویی پشتیبانی ── */
-.support-dropdown{position:relative;margin:16px auto 0;width:100%;max-width:280px;z-index:5;direction:rtl}
-.support-toggle{width:100%;padding:10px 16px;background:var(--card);border:1px solid var(--card-border);border-radius:10px;color:var(--text-mid);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.25s}
-.support-toggle:hover{background:rgba(91,141,239,0.04);border-color:rgba(91,141,239,0.12);color:var(--accent2)}
-.support-toggle i:first-child{color:var(--accent);font-size:16px}
-.support-toggle #supportArrow{transition:transform .3s ease;font-size:14px;margin-right:auto}
-.support-toggle.open #supportArrow{transform:rotate(180deg)}
+.support-dropdown{position:relative;margin-top:0;width:100%;z-index:5;direction:rtl}
 .support-menu{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;overflow:hidden;opacity:0;transform:translateY(-6px);transition:all .3s ease}
 .support-menu.open{grid-template-rows:1fr;opacity:1;transform:translateY(0)}
 .support-menu-inner{overflow:hidden;background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:6px;margin-top:6px;display:flex;flex-direction:column;gap:2px}
@@ -2775,11 +2765,9 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
   .sub-table{font-size:11px}
   .config-item{flex-direction:column;align-items:stretch}
   .config-actions{justify-content:flex-start;margin-top:4px}
-  .actions{flex-direction:column}
+  .actions-grid{grid-template-columns:1fr}
   .btn{justify-content:center}
   .sub-card{padding:16px}
-  .support-dropdown{max-width:100%}
-  .configs-toggle{font-size:11px}
 }
 </style>
 </head>
@@ -2819,44 +2807,39 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
       <div class="usage-percent" id="usage-percent">0%</div>
     </div>
 
-    <div class="actions">
+    <!-- ۴ دکمه در دو ردیف -->
+    <div class="actions-grid">
       <button class="btn btn-primary" onclick="copySubUrl()"><i class="ti ti-copy"></i> کپی لینک اشتراک</button>
       <button class="btn btn-primary" onclick="copyAllConfigs()"><i class="ti ti-clipboard-copy"></i> کپی همه‌ی کانفیگ‌ها</button>
+      <button class="btn btn-outline" onclick="toggleConfigs()" id="configsToggleBtn"><i class="ti ti-list"></i> لیست کانفیگ‌ها</button>
+      <button class="btn btn-outline" onclick="toggleSupport()" id="supportToggleBtn"><i class="ti ti-headset"></i> پشتیبانی</button>
     </div>
-  </div>
 
-  <!-- منوی کشویی لیست کانفیگ‌ها -->
-  <div class="configs-dropdown" id="configsDropdown">
-    <button class="configs-toggle" onclick="toggleConfigs()">
-      <i class="ti ti-list"></i> لیست کانفیگ‌ها
-      <i class="ti ti-chevron-down" id="configArrow"></i>
-    </button>
-    <div class="configs-menu" id="configsMenu">
-      <div class="configs-menu-inner" id="config-list">
-        <div class="empty-configs">در حال بارگذاری...</div>
+    <!-- منوی کشویی لیست کانفیگ‌ها -->
+    <div class="configs-dropdown">
+      <div class="configs-menu" id="configsMenu">
+        <div class="configs-menu-inner" id="config-list">
+          <div class="empty-configs">در حال بارگذاری...</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- دکمه‌ی کشویی پشتیبانی -->
-  <div class="support-dropdown" id="supportDropdown">
-    <button class="support-toggle" onclick="toggleSupport()">
-      <i class="ti ti-headset"></i> پشتیبانی
-      <i class="ti ti-chevron-down" id="supportArrow"></i>
-    </button>
-    <div class="support-menu" id="supportMenu">
-      <div class="support-menu-inner">
-        <div class="support-item">
-          <i class="ti ti-brand-telegram"></i>
-          <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a>
-        </div>
-        <div class="support-item">
-          <i class="ti ti-mail"></i>
-          <span>support@x4g.com</span>
-        </div>
-        <div class="support-divider"></div>
-        <div class="support-version">
-          <i class="ti ti-rocket"></i> X4G v9.5
+    <!-- منوی کشویی پشتیبانی -->
+    <div class="support-dropdown">
+      <div class="support-menu" id="supportMenu">
+        <div class="support-menu-inner">
+          <div class="support-item">
+            <i class="ti ti-brand-telegram"></i>
+            <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a>
+          </div>
+          <div class="support-item">
+            <i class="ti ti-mail"></i>
+            <span>support@x4g.com</span>
+          </div>
+          <div class="support-divider"></div>
+          <div class="support-version">
+            <i class="ti ti-rocket"></i> X4G v9.5
+          </div>
         </div>
       </div>
     </div>
@@ -2886,39 +2869,51 @@ applyTheme(isDark);
 // ── منوی کشویی کانفیگ‌ها ──
 function toggleConfigs(){
   const menu = document.getElementById('configsMenu');
-  const btn = document.querySelector('.configs-toggle');
+  const btn = document.getElementById('configsToggleBtn');
   const isOpen = menu.classList.toggle('open');
   btn.classList.toggle('open', isOpen);
+  if (isOpen) {
+    btn.innerHTML = '<i class="ti ti-list"></i> بستن لیست کانفیگ‌ها';
+  } else {
+    btn.innerHTML = '<i class="ti ti-list"></i> لیست کانفیگ‌ها';
+  }
 }
 
 // ── منوی کشویی پشتیبانی ──
 function toggleSupport(){
   const menu = document.getElementById('supportMenu');
-  const btn = document.querySelector('.support-toggle');
+  const btn = document.getElementById('supportToggleBtn');
   const isOpen = menu.classList.toggle('open');
   btn.classList.toggle('open', isOpen);
+  if (isOpen) {
+    btn.innerHTML = '<i class="ti ti-headset"></i> بستن پشتیبانی';
+  } else {
+    btn.innerHTML = '<i class="ti ti-headset"></i> پشتیبانی';
+  }
 }
 
 // بستن منوها با کلیک خارج
 document.addEventListener('click', function(e) {
   // کانفیگ‌ها
-  const configsDropdown = document.getElementById('configsDropdown');
+  const configsDropdown = document.querySelector('.configs-dropdown');
   if (!configsDropdown.contains(e.target)) {
     const menu = document.getElementById('configsMenu');
-    const btn = configsDropdown.querySelector('.configs-toggle');
+    const btn = document.getElementById('configsToggleBtn');
     if (menu.classList.contains('open')) {
       menu.classList.remove('open');
       btn.classList.remove('open');
+      btn.innerHTML = '<i class="ti ti-list"></i> لیست کانفیگ‌ها';
     }
   }
   // پشتیبانی
-  const supportDropdown = document.getElementById('supportDropdown');
+  const supportDropdown = document.querySelector('.support-dropdown');
   if (!supportDropdown.contains(e.target)) {
     const menu = document.getElementById('supportMenu');
-    const btn = supportDropdown.querySelector('.support-toggle');
+    const btn = document.getElementById('supportToggleBtn');
     if (menu.classList.contains('open')) {
       menu.classList.remove('open');
       btn.classList.remove('open');
+      btn.innerHTML = '<i class="ti ti-headset"></i> پشتیبانی';
     }
   }
 });
