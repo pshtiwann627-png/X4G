@@ -2624,7 +2624,7 @@ DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 # تابع صفحه پابلیک ساب - اصلاح‌شده و بدون باگ
 # =======================================================
 def get_public_page_html(uuid_key: str) -> str:
-    """صفحه پابلیک ساب — نسخه‌ی نهایی بدون دکمه‌ی کپی همه"""
+    """صفحه پابلیک ساب — نسخه‌ی نهایی با نمودارهای دقیق و دایره‌ای"""
     
     html = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -3085,7 +3085,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 }
 .charts-row{
   display:grid;
-  grid-template-columns:1fr 1.6fr;
+  grid-template-columns:1fr 1fr;
   gap:16px;
 }
 .chart-card{
@@ -3549,8 +3549,8 @@ async function submitLock(){
   renderContent(data);
 }
 
-// ── رسم نمودارها ──
-function renderCharts(linksData) {
+// ── رسم نمودارها با داده‌های دقیق ──
+async function renderCharts(linksData) {
   // ── نمودار دونات (سهم مصرف هر کانفیگ) ──
   const donutCtx = document.getElementById('donutChart');
   if (!donutCtx) return;
@@ -3617,104 +3617,98 @@ function renderCharts(linksData) {
     }
   });
 
-  // ── نمودار خطی (روند مصرف) ──
-  const lineCtx = document.getElementById('lineChart');
-  if (!lineCtx) return;
+  // ── نمودار دایره‌ای ۲۴ ساعته ──
+  const pieCtx = document.getElementById('pieChart');
+  if (!pieCtx) return;
   
-  if (window._lineChart) {
-    window._lineChart.destroy();
+  if (window._pieChart) {
+    window._pieChart.destroy();
   }
   
-  const hourlyData = window._hourlyData || generateDummyHourlyData();
-  const lineLabels = hourlyData.map(d => d.hour);
-  const lineValues = hourlyData.map(d => d.value);
+  // دریافت داده‌های واقعی از API
+  let hourlyData = [];
+  try {
+    const response = await fetch('/stats/hourly');
+    if (response.ok) {
+      const data = await response.json();
+      hourlyData = data.hourly || [];
+    } else {
+      console.warn('دریافت داده‌های ساعتی با خطا مواجه شد');
+    }
+  } catch (e) {
+    console.warn('خطا در دریافت داده‌های ساعتی:', e);
+  }
   
-  const gradient = lineCtx.getContext('2d').createLinearGradient(0, 0, 0, 220);
-  gradient.addColorStop(0, 'rgba(91,141,239,0.25)');
-  gradient.addColorStop(1, 'rgba(91,141,239,0.01)');
+  // اگر داده‌ای وجود نداشت، پیام خطا نمایش داده می‌شود
+  if (!hourlyData || hourlyData.length === 0) {
+    document.getElementById('pieChart').parentElement.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-mid);font-size:12px;">
+        <i class="ti ti-alert-circle" style="margin-left:6px;"></i>
+        داده‌ای برای نمایش وجود ندارد
+      </div>
+    `;
+    return;
+  }
   
-  window._lineChart = new Chart(lineCtx, {
-    type: 'line',
+  // آماده‌سازی داده‌ها برای نمودار دایره‌ای (۲۴ ساعت)
+  const pieLabels = hourlyData.map(d => d.hour || '--:--');
+  const pieValues = hourlyData.map(d => d.value || 0);
+  const pieColors = [
+    '#5b8def', '#7aa3ff', '#3FD79C', '#F9C988', 
+    '#BCA4F7', '#FB8585', '#4DD0E1', '#FFB74D',
+    '#5b8def', '#7aa3ff', '#3FD79C', '#F9C988',
+    '#BCA4F7', '#FB8585', '#4DD0E1', '#FFB74D',
+    '#5b8def', '#7aa3ff', '#3FD79C', '#F9C988',
+    '#BCA4F7', '#FB8585', '#4DD0E1', '#FFB74D'
+  ];
+  
+  window._pieChart = new Chart(pieCtx, {
+    type: 'pie',
     data: {
-      labels: lineLabels,
+      labels: pieLabels,
       datasets: [{
-        label: 'مصرف (MB)',
-        data: lineValues,
-        borderColor: '#5b8def',
-        backgroundColor: gradient,
-        fill: true,
-        tension: 0.4,
-        pointRadius: 2,
-        pointBackgroundColor: '#5b8def',
-        pointBorderColor: isDark ? '#05080f' : '#eef2f8',
-        pointBorderWidth: 1.5,
-        pointHoverRadius: 6,
-        pointHoverBackgroundColor: '#5b8def',
-        pointHoverBorderColor: '#fff',
-        pointHoverBorderWidth: 2,
-        borderWidth: 2.5
+        data: pieValues,
+        backgroundColor: pieColors.slice(0, pieValues.length),
+        borderColor: isDark ? '#05080f' : '#eef2f8',
+        borderWidth: 1.5,
+        borderRadius: 3,
+        spacing: 1
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false
-      },
       plugins: {
         legend: {
-          display: false
+          position: 'bottom',
+          labels: {
+            color: textColor,
+            font: { family: 'Vazirmatn', size: 8, weight: '600' },
+            padding: 8,
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 8,
+            boxHeight: 8,
+            maxHeight: 60
+          }
         },
         tooltip: {
           backgroundColor: isDark ? 'rgba(5,8,15,0.9)' : 'rgba(238,242,248,0.9)',
           borderColor: 'rgba(91,141,239,0.15)',
           borderWidth: 1,
-          titleFont: { family: 'Vazirmatn', size: 11, weight: '700' },
-          bodyFont: { family: 'Vazirmatn', size: 11 },
+          titleFont: { family: 'Vazirmatn', size: 10, weight: '700' },
+          bodyFont: { family: 'Vazirmatn', size: 10 },
           callbacks: {
             label: function(context) {
-              return context.parsed.y.toFixed(2) + ' MB';
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { color: 'rgba(255,255,255,0.02)' },
-          ticks: {
-            color: textColor,
-            font: { family: 'Vazirmatn', size: 8 },
-            maxTicksLimit: 8
-          }
-        },
-        y: {
-          grid: { color: 'rgba(255,255,255,0.03)' },
-          ticks: {
-            color: textColor,
-            font: { family: 'Vazirmatn', size: 8 },
-            callback: function(value) {
-              return value.toFixed(1);
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+              return context.label + ': ' + context.parsed.toFixed(1) + ' MB (' + percentage + '%)';
             }
           }
         }
       }
     }
   });
-}
-
-// ── تولید داده‌های ساختگی برای روند مصرف ──
-function generateDummyHourlyData() {
-  const hours = [];
-  const values = [];
-  const now = new Date();
-  for (let i = 23; i >= 0; i--) {
-    const h = new Date(now);
-    h.setHours(h.getHours() - i);
-    hours.push(h.getHours().toString().padStart(2, '0') + ':00');
-    values.push(Math.round((Math.random() * 50 + 5) * 100) / 100);
-  }
-  return hours.map((hour, index) => ({ hour, value: values[index] }));
 }
 
 // ── رندر ──
@@ -3846,11 +3840,11 @@ function renderContent(d){
         </div>
         <div class="chart-card">
           <div class="chart-header">
-            <i class="ti ti-chart-area"></i>
-            <span>روند مصرف (۲۴ ساعت اخیر)</span>
+            <i class="ti ti-chart-pie"></i>
+            <span>مصرف ۲۴ ساعت اخیر</span>
           </div>
           <div class="chart-container">
-            <canvas id="lineChart"></canvas>
+            <canvas id="pieChart"></canvas>
           </div>
         </div>
       </div>
