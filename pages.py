@@ -2623,9 +2623,8 @@ DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 # =======================================================
 # تابع صفحه پابلیک ساب - اصلاح‌شده و بدون باگ
 # =======================================================
-
 def get_public_page_html(uuid_key: str) -> str:
-    """صفحه پابلیک ساب — مدرن‌ترین طراحی با تم تیره (نسخه‌ی v5)"""
+    """صفحه پابلیک ساب — با تاریخ و زمان زنده و دکمه‌ی رفرش"""
     
     html = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -2638,14 +2637,12 @@ def get_public_page_html(uuid_key: str) -> str:
 <style>
 /* ========================================
    مدرن‌ترین طراحی — X4G v9.5
-   تم تیره‌ی مطلق با افکت‌های پیشرفته
+   با تاریخ و زمان زنده
    ======================================== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
 :root{
-  /* ── دارک (اصلی) ── */
   --bg:#05080f;
-  --bg2:#0a0f1a;
   --glass:rgba(255,255,255,0.03);
   --glass-border:rgba(255,255,255,0.05);
   --glass-shadow:0 20px 60px rgba(0,0,0,0.7);
@@ -2654,7 +2651,6 @@ def get_public_page_html(uuid_key: str) -> str:
   --text-mid:rgba(255,255,255,0.5);
   --accent:#5b8def;
   --accent2:#7aa3ff;
-  --accent-glow:rgba(91,141,239,0.15);
   --green:#1FB87E;
   --green-t:#3FD79C;
   --red:#EF4444;
@@ -2668,7 +2664,6 @@ def get_public_page_html(uuid_key: str) -> str:
 
 [data-theme="light"]{
   --bg:#eef2f8;
-  --bg2:#e4e8f0;
   --glass:rgba(255,255,255,0.5);
   --glass-border:rgba(255,255,255,0.6);
   --glass-shadow:0 20px 60px rgba(0,0,0,0.06);
@@ -2677,7 +2672,6 @@ def get_public_page_html(uuid_key: str) -> str:
   --text-mid:rgba(0,0,0,0.45);
   --accent:#3b6fd4;
   --accent2:#5a88e8;
-  --accent-glow:rgba(59,111,212,0.08);
   --green:#0E9A6A;
   --green-t:#0A7553;
   --red:#DC2626;
@@ -2690,20 +2684,15 @@ def get_public_page_html(uuid_key: str) -> str:
 
 html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);font-size:14px;transition:var(--transition);overflow-x:hidden}
 
-/* ── پس‌زمینه‌ی پیشرفته ── */
+/* ── پس‌زمینه ── */
 .bg-fx{
   position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(91,141,239,0.06), transparent 60%),
-    radial-gradient(ellipse 50% 50% at 80% 80%, rgba(157,123,240,0.04), transparent 50%),
-    var(--bg);
+  background:radial-gradient(ellipse 80% 60% at 50% -10%, rgba(91,141,239,0.06), transparent 60%),var(--bg);
   z-index:0;pointer-events:none;transition:var(--transition)
 }
 .grid-fx{
   position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+  background-image:linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
   background-size:56px 56px;
   z-index:0;pointer-events:none
 }
@@ -2753,7 +2742,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
   background:linear-gradient(135deg,var(--text),var(--accent2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent
 }
-.brand-sub{font-size:10px;color:var(--text-dim);font-weight:500;letter-spacing:0.04em}
+.brand-sub{font-size:10px;color:var(--text-dim);font-weight:500}
 .top-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .icon-btn{
   width:40px;height:40px;border-radius:14px;
@@ -2764,11 +2753,12 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
   font-size:18px;cursor:pointer;transition:var(--transition)
 }
 .icon-btn:hover{background:rgba(91,141,239,0.04);color:var(--accent2);border-color:rgba(91,141,239,0.12);transform:translateY(-2px)}
+#refresh-icon{transition:transform 0.3s ease}
+#refresh-icon.spin{animation:spin 0.8s linear 1}
 
 /* ── کارت اطلاعات ── */
 .sub-info{
   background:var(--glass);backdrop-filter:blur(32px);
-  -webkit-backdrop-filter:blur(32px);
   border:1px solid var(--glass-border);
   border-radius:30px;padding:32px 32px 26px;
   margin-bottom:20px;box-shadow:var(--glass-shadow);
@@ -2781,11 +2771,40 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
   opacity:0.03;pointer-events:none;animation:pulseGlow 12s ease-in-out infinite
 }
 @keyframes pulseGlow{0%,100%{transform:scale(1);opacity:0.02}50%{transform:scale(1.2);opacity:0.05}}
-.sub-info::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 60%,rgba(91,141,239,0.01));
-  pointer-events:none
+
+/* ── تاریخ و زمان ── */
+.datetime-row{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--text-mid);
+  padding:8px 14px;margin-bottom:14px;
+  background:rgba(91,141,239,0.02);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  transition:var(--transition);
+  position:relative;z-index:1;
+  direction:ltr;
 }
+.datetime-row i{
+  color:var(--accent);
+  font-size:14px;
+  margin-left:4px;
+}
+.datetime-row .date-separator{
+  color:var(--text-dim);
+  margin:0 4px;
+}
+#live-datetime{
+  font-family:ui-monospace,monospace;
+  font-weight:600;
+  color:var(--accent2);
+  min-width:70px;
+}
+#live-date{
+  font-weight:500;
+  color:var(--text-mid);
+  min-width:90px;
+}
+
 .sub-eyebrow{
   font-size:10px;font-weight:700;color:var(--accent2);
   text-transform:uppercase;letter-spacing:0.14em;
@@ -2842,14 +2861,8 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
   background:linear-gradient(120deg,var(--accent),#7a5cf0);
   border-radius:22px;padding:18px 24px;margin-bottom:22px;
   box-shadow:0 12px 40px rgba(91,141,239,0.15);
-  flex-wrap:wrap;transition:var(--transition);position:relative;overflow:hidden
+  flex-wrap:wrap;transition:var(--transition)
 }
-.copy-all-bar::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent);
-  transform:translateX(-100%);animation:shimmer 6s ease-in-out infinite
-}
-@keyframes shimmer{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
 .copy-all-text{flex:1;min-width:160px;position:relative;z-index:1}
 .copy-all-title{font-size:14px;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
 .copy-all-sub{font-size:10px;color:rgba(255,255,255,0.65);margin-top:3px}
@@ -2873,15 +2886,9 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 
 .cfg-card{
   background:var(--glass);backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
   border:1px solid var(--glass-border);border-radius:24px;
   transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
   position:relative;overflow:hidden
-}
-.cfg-card::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 40%,rgba(91,141,239,0.01));
-  pointer-events:none
 }
 .cfg-card:hover{border-color:rgba(91,141,239,0.12);box-shadow:var(--glass-shadow);transform:translateY(-4px)}
 .cfg-card.inactive{opacity:0.5}
@@ -3094,6 +3101,9 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
   .cfg-tear{margin:0 18px}
   .cfg-tear::before{right:-26px}
   .cfg-tear::after{left:-26px}
+  .datetime-row{font-size:10px;padding:6px 10px}
+  #live-datetime{min-width:60px}
+  #live-date{min-width:80px}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -3105,14 +3115,10 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 <div class="orb orb2"></div>
 <div class="orb orb3"></div>
 <div class="particles">
-  <span class="particle"></span>
-  <span class="particle"></span>
-  <span class="particle"></span>
-  <span class="particle"></span>
-  <span class="particle"></span>
-  <span class="particle"></span>
-  <span class="particle"></span>
-  <span class="particle"></span>
+  <span class="particle"></span><span class="particle"></span>
+  <span class="particle"></span><span class="particle"></span>
+  <span class="particle"></span><span class="particle"></span>
+  <span class="particle"></span><span class="particle"></span>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -3135,7 +3141,12 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
       </div>
     </div>
     <div class="top-actions">
-      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="تغییر تم"><i class="ti ti-sun" id="theme-icon"></i></button>
+      <button class="icon-btn" id="refresh-btn" onclick="manualRefresh()" title="رفرش دستی">
+        <i class="ti ti-refresh" id="refresh-icon"></i>
+      </button>
+      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="تغییر تم">
+        <i class="ti ti-sun" id="theme-icon"></i>
+      </button>
     </div>
   </div>
 
@@ -3162,6 +3173,53 @@ function toggleTheme(){
   applyTheme(isDark);
 }
 applyTheme(isDark);
+
+// ── تاریخ و زمان زنده ──
+let datetimeInterval = null;
+
+function updateDateTime() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('fa-IR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+  const dateStr = now.toLocaleDateString('fa-IR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  
+  const timeEl = document.getElementById('live-datetime');
+  const dateEl = document.getElementById('live-date');
+  if (timeEl) timeEl.textContent = timeStr;
+  if (dateEl) dateEl.textContent = dateStr;
+}
+
+function startDateTimeTimer() {
+  updateDateTime();
+  if (datetimeInterval) clearInterval(datetimeInterval);
+  datetimeInterval = setInterval(updateDateTime, 1000);
+}
+
+function stopDateTimeTimer() {
+  if (datetimeInterval) {
+    clearInterval(datetimeInterval);
+    datetimeInterval = null;
+  }
+}
+
+// ── رفرش دستی ──
+function manualRefresh() {
+  const icon = document.getElementById('refresh-icon');
+  icon.style.animation = 'spin 0.8s linear 1';
+  setTimeout(() => { icon.style.animation = ''; }, 800);
+  
+  updateDateTime();
+  if (typeof autoRefresh === 'function') autoRefresh();
+  toast('🔄 رفرش شد', 'ok');
+}
 
 // ── ابزارها ──
 function toast(msg, type=''){
@@ -3277,6 +3335,14 @@ function renderContent(d){
       <div class="sub-eyebrow"><i class="ti ti-folders"></i> گروه دسترسی</div>
       <div class="sub-name">${esc(d.name)}</div>
       ${d.desc ? `<div class="sub-desc">${esc(d.desc)}</div>` : ''}
+      
+      <div class="datetime-row" id="datetime-display">
+        <i class="ti ti-clock"></i>
+        <span id="live-datetime">--:--:--</span>
+        <span class="date-separator">•</span>
+        <span id="live-date">----/--/--</span>
+      </div>
+      
       <div class="sub-meta-row"><i class="ti ti-clock"></i> آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}</div>
       <div class="sub-sub-box">
         <span class="sub-sub-url">${esc(subUrl)}</span>
@@ -3399,6 +3465,9 @@ async function init(){
   }
 }
 
+// ── اجرا ──
+document.addEventListener('DOMContentLoaded', startDateTimeTimer);
+window.addEventListener('beforeunload', stopDateTimeTimer);
 init();
 </script>
 </body></html>"""
@@ -3408,3 +3477,4 @@ init();
     html = html.replace("__UUID_KEY__", uuid_key)
     
     return html
+          
