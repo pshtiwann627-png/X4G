@@ -2624,7 +2624,7 @@ DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 # تابع صفحه پابلیک ساب - اصلاح‌شده و بدون باگ
 # =======================================================
 def get_public_page_html(uuid_key: str) -> str:
-    """صفحه پابلیک ساب — طراحی مینیمال و ساده (مطابق با تصاویر)"""
+    """صفحه پابلیک ساب — نسخه‌ی نهایی با منوی کشویی لیست کانفیگ‌ها"""
     
     html = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -2690,13 +2690,12 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 .brand-img img{width:100%;height:100%;object-fit:cover}
 .brand-name{font-size:15px;font-weight:800;color:var(--text)}
 .brand-sub{font-size:9px;color:var(--text-dim)}
+.top-actions{display:flex;gap:6px;align-items:center}
 .theme-btn{background:var(--card);border:1px solid var(--card-border);color:var(--text-mid);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.2s}
 .theme-btn:hover{background:rgba(91,141,239,0.06);color:var(--accent2)}
 
 /* ── کارت اشتراک ── */
 .sub-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:20px 22px 18px;margin-bottom:16px}
-.sub-id{font-size:11px;color:var(--text-dim);margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.sub-id span{font-family:ui-monospace,monospace;color:var(--accent2);background:rgba(91,141,239,0.06);padding:2px 8px;border-radius:4px;border:1px solid rgba(91,141,239,0.06)}
 
 .sub-table{width:100%;border-collapse:collapse;font-size:12.5px}
 .sub-table tr{border-bottom:1px solid rgba(255,255,255,0.04)}
@@ -2722,13 +2721,20 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 .btn-outline:hover{background:rgba(91,141,239,0.04);color:var(--accent2)}
 .btn i{font-size:13px}
 
-/* ── لیست کانفیگ‌ها ── */
-.configs-title{font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.06em}
-.configs-title i{color:var(--accent);font-size:14px}
-
-.config-item{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;transition:.2s;flex-wrap:wrap}
-.config-item:hover{border-color:rgba(91,141,239,0.12)}
-.config-info{display:flex;align-items:center;gap:8px;flex:1;min-width:180px;flex-wrap:wrap}
+/* ── منوی کشویی لیست کانفیگ‌ها ── */
+.configs-dropdown{position:relative;margin-top:16px;width:100%;z-index:10}
+.configs-toggle{width:100%;padding:10px 16px;background:var(--card);border:1px solid var(--card-border);border-radius:10px;color:var(--text-mid);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.25s}
+.configs-toggle:hover{background:rgba(91,141,239,0.04);border-color:rgba(91,141,239,0.12);color:var(--accent2)}
+.configs-toggle i:first-child{color:var(--accent);font-size:16px}
+.configs-toggle #configArrow{transition:transform .3s ease;font-size:14px;margin-right:auto}
+.configs-toggle.open #configArrow{transform:rotate(180deg)}
+.configs-menu{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;overflow:hidden;opacity:0;transform:translateY(-6px);transition:all .3s ease}
+.configs-menu.open{grid-template-rows:1fr;opacity:1;transform:translateY(0)}
+.configs-menu-inner{overflow:hidden;background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:8px;margin-top:6px}
+.config-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-radius:8px;margin-bottom:4px;transition:.2s;flex-wrap:wrap}
+.config-item:last-child{margin-bottom:0}
+.config-item:hover{background:rgba(91,141,239,0.04)}
+.config-info{display:flex;align-items:center;gap:8px;flex:1;min-width:160px;flex-wrap:wrap}
 .config-proto{font-size:9px;font-weight:800;padding:2px 8px;border-radius:4px;background:rgba(91,141,239,0.06);color:var(--accent2);white-space:nowrap}
 .config-proto.tcp{background:rgba(16,185,129,0.06);color:var(--green-t)}
 .config-proto.ws{background:rgba(245,158,11,0.06);color:var(--amber-t)}
@@ -2739,10 +2745,25 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
 .config-actions{display:flex;gap:4px}
 .config-actions .btn{padding:4px 8px;font-size:10px;border-radius:6px;background:transparent;border:1px solid var(--card-border);color:var(--text-dim)}
 .config-actions .btn:hover{background:rgba(91,141,239,0.06);color:var(--accent2)}
+.empty-configs{text-align:center;padding:16px;color:var(--text-dim);font-size:12px}
 
-/* ── فوتر ── */
-.footer{text-align:center;margin-top:24px;font-size:10px;color:var(--text-dim)}
-.footer a{color:var(--accent2);font-weight:600;text-decoration:none}
+/* ── دکمه‌ی کشویی پشتیبانی ── */
+.support-dropdown{position:relative;margin:16px auto 0;width:100%;max-width:280px;z-index:5;direction:rtl}
+.support-toggle{width:100%;padding:10px 16px;background:var(--card);border:1px solid var(--card-border);border-radius:10px;color:var(--text-mid);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.25s}
+.support-toggle:hover{background:rgba(91,141,239,0.04);border-color:rgba(91,141,239,0.12);color:var(--accent2)}
+.support-toggle i:first-child{color:var(--accent);font-size:16px}
+.support-toggle #supportArrow{transition:transform .3s ease;font-size:14px;margin-right:auto}
+.support-toggle.open #supportArrow{transform:rotate(180deg)}
+.support-menu{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;overflow:hidden;opacity:0;transform:translateY(-6px);transition:all .3s ease}
+.support-menu.open{grid-template-rows:1fr;opacity:1;transform:translateY(0)}
+.support-menu-inner{overflow:hidden;background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:6px;margin-top:6px;display:flex;flex-direction:column;gap:2px}
+.support-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;color:var(--text-mid);font-size:12px;transition:.2s;cursor:default}
+.support-item:hover{background:rgba(91,141,239,0.04)}
+.support-item i{color:var(--accent2);font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.support-item a{color:var(--text);text-decoration:none;font-weight:600;transition:.2s;flex:1}
+.support-item a:hover{color:var(--accent2)}
+.support-divider{height:1px;background:var(--card-border);margin:2px 8px}
+.support-version{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 0 2px;font-size:9.5px;color:var(--text-dim)}
 
 /* ── Toast ── */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(50px);background:var(--card);border:1px solid var(--card-border);color:var(--text);border-radius:10px;padding:10px 20px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap}
@@ -2757,6 +2778,8 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
   .actions{flex-direction:column}
   .btn{justify-content:center}
   .sub-card{padding:16px}
+  .support-dropdown{max-width:100%}
+  .configs-toggle{font-size:11px}
 }
 </style>
 </head>
@@ -2771,23 +2794,20 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
         <div class="brand-sub">پنل اشتراک</div>
       </div>
     </div>
-    <button class="theme-btn" onclick="toggleTheme()"><i class="ti ti-sun" id="theme-icon"></i></button>
+    <div class="top-actions">
+      <button class="theme-btn" onclick="toggleTheme()"><i class="ti ti-sun" id="theme-icon"></i></button>
+    </div>
   </div>
 
   <!-- کارت اشتراک -->
   <div class="sub-card" id="sub-card">
-    <div class="sub-id"><i class="ti ti-id-badge"></i> شناسه اشتراک <span id="sub-id">—</span></div>
-    
     <table class="sub-table" id="sub-table">
-      <tr><td>ایمیل</td><td id="email">—</td></tr>
-      <tr><td>وضعیت</td><td id="status" class="status-active">—</td></tr>
-      <tr><td>دانلود</td><td id="downloaded">—</td></tr>
-      <tr><td>آپلود</td><td id="uploaded">—</td></tr>
+      <tr><td>شماره اشتراک</td><td id="sub-number">SUB-XXXXX</td></tr>
+      <tr><td>وضعیت</td><td id="status" class="status-active">فعال</td></tr>
       <tr><td>مصرف</td><td id="usage">—</td></tr>
       <tr><td>سهمیه کل</td><td id="total-quota">—</td></tr>
       <tr><td>باقی‌مانده</td><td id="remaining">—</td></tr>
-      <tr><td>آخرین اتصال</td><td id="last-online">—</td></tr>
-      <tr><td>انقضا</td><td id="expiry">—</td></tr>
+      <tr><td>انقضا</td><td id="expiry">بدون انقضا</td></tr>
     </table>
 
     <div class="usage-wrap">
@@ -2805,12 +2825,42 @@ html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-seri
     </div>
   </div>
 
-  <!-- لیست کانفیگ‌ها -->
-  <div class="configs-title"><i class="ti ti-link"></i> کانفیگ‌های اشتراک</div>
-  <div id="config-list"></div>
+  <!-- منوی کشویی لیست کانفیگ‌ها -->
+  <div class="configs-dropdown" id="configsDropdown">
+    <button class="configs-toggle" onclick="toggleConfigs()">
+      <i class="ti ti-list"></i> لیست کانفیگ‌ها
+      <i class="ti ti-chevron-down" id="configArrow"></i>
+    </button>
+    <div class="configs-menu" id="configsMenu">
+      <div class="configs-menu-inner" id="config-list">
+        <div class="empty-configs">در حال بارگذاری...</div>
+      </div>
+    </div>
+  </div>
 
-  <!-- فوتر -->
-  <div class="footer">پشتیبانی: <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a> · X4G v9.5</div>
+  <!-- دکمه‌ی کشویی پشتیبانی -->
+  <div class="support-dropdown" id="supportDropdown">
+    <button class="support-toggle" onclick="toggleSupport()">
+      <i class="ti ti-headset"></i> پشتیبانی
+      <i class="ti ti-chevron-down" id="supportArrow"></i>
+    </button>
+    <div class="support-menu" id="supportMenu">
+      <div class="support-menu-inner">
+        <div class="support-item">
+          <i class="ti ti-brand-telegram"></i>
+          <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a>
+        </div>
+        <div class="support-item">
+          <i class="ti ti-mail"></i>
+          <span>support@x4g.com</span>
+        </div>
+        <div class="support-divider"></div>
+        <div class="support-version">
+          <i class="ti ti-rocket"></i> X4G v9.5
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Toast -->
@@ -2832,6 +2882,46 @@ function toggleTheme(){
   applyTheme(isDark);
 }
 applyTheme(isDark);
+
+// ── منوی کشویی کانفیگ‌ها ──
+function toggleConfigs(){
+  const menu = document.getElementById('configsMenu');
+  const btn = document.querySelector('.configs-toggle');
+  const isOpen = menu.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+}
+
+// ── منوی کشویی پشتیبانی ──
+function toggleSupport(){
+  const menu = document.getElementById('supportMenu');
+  const btn = document.querySelector('.support-toggle');
+  const isOpen = menu.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+}
+
+// بستن منوها با کلیک خارج
+document.addEventListener('click', function(e) {
+  // کانفیگ‌ها
+  const configsDropdown = document.getElementById('configsDropdown');
+  if (!configsDropdown.contains(e.target)) {
+    const menu = document.getElementById('configsMenu');
+    const btn = configsDropdown.querySelector('.configs-toggle');
+    if (menu.classList.contains('open')) {
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+    }
+  }
+  // پشتیبانی
+  const supportDropdown = document.getElementById('supportDropdown');
+  if (!supportDropdown.contains(e.target)) {
+    const menu = document.getElementById('supportMenu');
+    const btn = supportDropdown.querySelector('.support-toggle');
+    if (menu.classList.contains('open')) {
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+    }
+  }
+});
 
 // ── Toast ──
 function toast(msg, type=''){
@@ -2921,17 +3011,13 @@ function renderContent(d){
   const pct = totalBytes > 0 ? Math.min(100, (usedBytes / totalBytes) * 100) : 0;
 
   // پر کردن جدول
-  document.getElementById('sub-id').textContent = d.id || UUID_KEY;
-  document.getElementById('email').textContent = d.email || '—';
+  document.getElementById('sub-number').textContent = 'SUB-' + (d.id || UUID_KEY).slice(0, 8).toUpperCase();
   const statusEl = document.getElementById('status');
   statusEl.textContent = d.status || 'فعال';
   statusEl.className = d.status === 'فعال' ? 'status-active' : 'status-expired';
-  document.getElementById('downloaded').textContent = d.downloaded || fmtB(d.download_bytes || 0);
-  document.getElementById('uploaded').textContent = d.uploaded || fmtB(d.upload_bytes || 0);
   document.getElementById('usage').textContent = d.usage || fmtB(usedBytes);
   document.getElementById('total-quota').textContent = d.total_quota || fmtB(totalBytes);
   document.getElementById('remaining').textContent = d.remaining || fmtB(totalBytes - usedBytes);
-  document.getElementById('last-online').textContent = d.last_online || '—';
   document.getElementById('expiry').textContent = d.expiry || 'بدون انقضا';
 
   // نوار مصرف
@@ -2940,10 +3026,10 @@ function renderContent(d){
   document.getElementById('usage-fill').style.width = pct + '%';
   document.getElementById('usage-percent').textContent = pct.toFixed(1) + '%';
 
-  // لیست کانفیگ‌ها
+  // لیست کانفیگ‌ها در منوی کشویی
   const list = document.getElementById('config-list');
   if (!d.links.length) {
-    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:12px">هیچ کانفیگی در این گروه وجود ندارد</div>';
+    list.innerHTML = '<div class="empty-configs">هیچ کانفیگی در این گروه وجود ندارد</div>';
     return;
   }
   list.innerHTML = d.links.map((l, i) => `
@@ -2982,7 +3068,6 @@ function copyConfig(i){
 function showQR(i){
   const links = window._x4gLinks || [];
   if(!links[i]) return;
-  const label = links[i].label || 'کانفیگ';
   const link = links[i].vless;
   window.open('https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(link), '_blank');
 }
