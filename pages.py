@@ -2618,7 +2618,7 @@ LOGIN_HTML = LOGIN_HTML.replace("__LOGO_B64__", LOGO_B64)
 DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 
 def get_public_page_html(uuid_key: str) -> str:
-    """صفحه پابلیک ساب v3 — طراحی حرفه‌ای‌تر: لینک کانفیگ پنهان با دکمه نمایش، صفحه‌ی رمز با طراحی ویژه"""
+    """صفحه پابلیک ساب v5 — طراحی شیشه‌ای آیفونی"""
     return f"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -2628,179 +2628,674 @@ def get_public_page_html(uuid_key: str) -> str:
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
+/* ═══════════════════════════════════════════════════════════════════════════════
+   طراحی شیشه‌ای آیفونی - صفحه پابلیک ساب
+   ═══════════════════════════════════════════════════════════════════════════════ */
 *{{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}}
+
 :root{{
-  --bg:#060a14;--bg2:#0a1020;--bg3:#0d1428;
-  --card:#0c1326;--card-b:rgba(96,148,246,0.12);--card-bh:rgba(96,148,246,0.28);
-  --accent:#3B7CF6;--accent2:#6EA3FF;--accent-d:rgba(59,124,246,0.1);
-  --green:#1FB87E;--green-bg:rgba(31,184,126,0.1);--green-t:#3FD79C;
-  --red:#EF4444;--red-bg:rgba(239,68,68,0.1);--red-t:#FB8585;
-  --amber:#F2A33D;--amber-bg:rgba(242,163,61,0.1);--amber-t:#F9C988;
-  --purple:#9D7BF0;--purple-bg:rgba(157,123,240,0.1);--purple-t:#BCA4F7;
-  --t1:#EFF4FF;--t2:#8AA0C4;--t3:#48577A;
-  --radius:18px;--shadow:0 12px 40px rgba(0,0,0,0.45);
-  --serif:'Vazirmatn',sans-serif;
+  --bg-dark:#0a0a12;
+  --bg2-dark:#0f0f1a;
+  --glass-dark:rgba(255,255,255,0.04);
+  --glass-border-dark:rgba(255,255,255,0.06);
+  --glass-shadow-dark:0 8px 40px rgba(0,0,0,0.5);
+  --text-dark:#eeeff5;
+  --text2-dark:rgba(255,255,255,0.7);
+  --text3-dark:rgba(255,255,255,0.35);
+  --accent-dark:#5b8def;
+  --accent2-dark:#7aa3ff;
+  --accent-d-dark:rgba(91,141,239,0.08);
+  --green-dark:#2dd4a0;
+  --green-bg-dark:rgba(45,212,160,0.08);
+  --green-t-dark:#5be0b0;
+  --red-dark:#f87171;
+  --red-bg-dark:rgba(248,113,113,0.08);
+  --red-t-dark:#fb9292;
+  --amber-dark:#fbbf24;
+  --amber-bg-dark:rgba(251,191,36,0.08);
+  --amber-t-dark:#fcd34d;
+  --purple-dark:#a78bfa;
+  --purple-bg-dark:rgba(167,139,250,0.08);
+  --purple-t-dark:#c4b5fd;
+
+  --bg-light:#eef0f5;
+  --bg2-light:#e4e7ef;
+  --glass-light:rgba(255,255,255,0.6);
+  --glass-border-light:rgba(255,255,255,0.7);
+  --glass-shadow-light:0 8px 40px rgba(0,0,0,0.06);
+  --text-light:#12121e;
+  --text2-light:rgba(0,0,0,0.65);
+  --text3-light:rgba(0,0,0,0.3);
+  --accent-light:#3b6fd4;
+  --accent2-light:#5a88e8;
+  --accent-d-light:rgba(59,111,212,0.06);
+  --green-light:#0d9e6e;
+  --green-bg-light:rgba(13,158,110,0.06);
+  --green-t-light:#0a805a;
+  --red-light:#dc2626;
+  --red-bg-light:rgba(220,38,38,0.06);
+  --red-t-light:#b91c1c;
+  --amber-light:#d97706;
+  --amber-bg-light:rgba(217,119,6,0.06);
+  --amber-t-light:#b45309;
+  --purple-light:#7c3aed;
+  --purple-bg-light:rgba(124,58,237,0.06);
+  --purple-t-light:#6d28d9;
+
+  --bg:var(--bg-dark);
+  --bg2:var(--bg2-dark);
+  --glass:var(--glass-dark);
+  --glass-border:var(--glass-border-dark);
+  --glass-shadow:var(--glass-shadow-dark);
+  --text:var(--text-dark);
+  --text2:var(--text2-dark);
+  --text3:var(--text3-dark);
+  --accent:var(--accent-dark);
+  --accent2:var(--accent2-dark);
+  --accent-d:var(--accent-d-dark);
+  --green:var(--green-dark);
+  --green-bg:var(--green-bg-dark);
+  --green-t:var(--green-t-dark);
+  --red:var(--red-dark);
+  --red-bg:var(--red-bg-dark);
+  --red-t:var(--red-t-dark);
+  --amber:var(--amber-dark);
+  --amber-bg:var(--amber-bg-dark);
+  --amber-t:var(--amber-t-dark);
+  --purple:var(--purple-dark);
+  --purple-bg:var(--purple-bg-dark);
+  --purple-t:var(--purple-t-dark);
+  --shadow:var(--glass-shadow);
+  --transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
 }}
+
 [data-theme="light"]{{
-  --bg:#F0F3FA;--bg2:#E5ECF8;--bg3:#D9E3F4;
-  --card:#FFFFFF;--card-b:rgba(59,124,246,0.14);--card-bh:rgba(59,124,246,0.32);
-  --accent:#2E63D6;--accent2:#1E4CB8;--accent-d:rgba(46,99,214,0.08);
-  --green:#0E9A6A;--green-bg:rgba(14,154,106,0.08);--green-t:#0A7553;
-  --red:#DC2626;--red-bg:rgba(220,38,38,0.08);--red-t:#A51E1E;
-  --amber:#C97A12;--amber-bg:rgba(201,122,18,0.08);--amber-t:#8F5A0C;
-  --purple:#7350D6;--purple-bg:rgba(115,80,214,0.08);--purple-t:#5A3CAD;
-  --t1:#101A30;--t2:#48577A;--t3:#8694B0;
-  --shadow:0 12px 36px rgba(20,40,90,0.12);
+  --bg:var(--bg-light);
+  --bg2:var(--bg2-light);
+  --glass:var(--glass-light);
+  --glass-border:var(--glass-border-light);
+  --glass-shadow:var(--glass-shadow-light);
+  --text:var(--text-light);
+  --text2:var(--text2-light);
+  --text3:var(--text3-light);
+  --accent:var(--accent-light);
+  --accent2:var(--accent2-light);
+  --accent-d:var(--accent-d-light);
+  --green:var(--green-light);
+  --green-bg:var(--green-bg-light);
+  --green-t:var(--green-t-light);
+  --red:var(--red-light);
+  --red-bg:var(--red-bg-light);
+  --red-t:var(--red-t-light);
+  --amber:var(--amber-light);
+  --amber-bg:var(--amber-bg-light);
+  --amber-t:var(--amber-t-light);
+  --purple:var(--purple-light);
+  --purple-bg:var(--purple-bg-light);
+  --purple-t:var(--purple-t-light);
 }}
-html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:var(--t1);font-size:14px;transition:background .35s,color .35s}}
-.bg-fx{{position:fixed;inset:0;background:radial-gradient(ellipse 70% 45% at 50% -8%,rgba(59,124,246,0.13),transparent 62%),var(--bg);z-index:0;pointer-events:none;transition:background .35s}}
-.grid-fx{{position:fixed;inset:0;background-image:linear-gradient(rgba(96,148,246,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(96,148,246,0.025) 1px,transparent 1px);background-size:46px 46px;z-index:0;pointer-events:none}}
-.wrap{{position:relative;z-index:10;max-width:800px;margin:0 auto;padding:24px 16px 64px}}
-.top{{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;gap:10px}}
-.brand{{display:flex;align-items:center;gap:11px;min-width:0}}
-.brand-img{{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1px solid var(--card-b);box-shadow:0 0 14px rgba(139,92,246,.3),0 0 8px rgba(59,130,246,.25);flex-shrink:0}}
+
+html,body{{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);font-size:14px;transition:var(--transition)}}
+
+.bg-fx{{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse 70% 45% at 50% -8%,rgba(91,141,239,0.08),transparent 62%),var(--bg);
+  z-index:0;pointer-events:none;transition:var(--transition);
+}}
+.grid-fx{{
+  position:fixed;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+  background-size:46px 46px;
+  z-index:0;pointer-events:none;
+}}
+
+.wrap{{
+  position:relative;z-index:10;
+  max-width:900px;margin:0 auto;
+  padding:24px 16px 64px;
+}}
+
+.top{{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:26px;gap:10px;
+}}
+.brand{{
+  display:flex;align-items:center;gap:11px;min-width:0;
+}}
+.brand-img{{
+  width:40px;height:40px;
+  border-radius:50%;overflow:hidden;
+  border:1px solid var(--glass-border);
+  box-shadow:0 0 30px rgba(91,141,239,0.1);
+  flex-shrink:0;
+}}
 .brand-img img{{width:100%;height:100%;object-fit:cover}}
-.brand-name{{font-size:14.5px;font-weight:800;color:var(--t1);letter-spacing:-.01em}}
-.brand-sub{{font-size:9.5px;color:var(--t3);font-weight:500}}
+.brand-name{{
+  font-size:14.5px;font-weight:800;color:var(--text);
+  letter-spacing:-0.01em;
+}}
+.brand-sub{{font-size:9.5px;color:var(--text3);font-weight:500}}
 .top-actions{{display:flex;align-items:center;gap:6px;flex-shrink:0}}
-.icon-btn{{width:36px;height:36px;border-radius:11px;background:var(--card);border:1px solid var(--card-b);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:.18s}}
-.icon-btn:hover{{background:var(--accent-d);color:var(--accent2);border-color:var(--card-bh)}}
+.icon-btn{{
+  width:36px;height:36px;
+  border-radius:12px;
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  color:var(--text2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;
+  transition:var(--transition);
+}}
+.icon-btn:hover{{background:var(--accent-d);color:var(--accent2);border-color:rgba(255,255,255,0.06)}}
 
-.sub-info{{background:var(--card);border:1px solid var(--card-b);border-radius:22px;padding:24px 24px 22px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}}
-.sub-info::before{{content:'';position:absolute;top:0;right:0;width:160px;height:160px;background:radial-gradient(circle at top right,rgba(59,124,246,.1),transparent 70%);pointer-events:none}}
-.sub-eyebrow{{font-size:10px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;display:flex;align-items:center;gap:6px}}
+/* ── اطلاعات گروه ── */
+.sub-info{{
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:24px;
+  padding:24px 24px 22px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}}
+.sub-info::before{{
+  content:'';
+  position:absolute;top:0;right:0;
+  width:160px;height:160px;
+  background:radial-gradient(circle at top right,rgba(91,141,239,0.06),transparent 70%);
+  pointer-events:none;
+}}
+.sub-eyebrow{{
+  font-size:10px;font-weight:700;color:var(--accent2);
+  text-transform:uppercase;letter-spacing:0.12em;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}}
 .sub-eyebrow i{{font-size:13px}}
-.sub-name{{font-size:23px;font-weight:800;color:var(--t1);margin-bottom:6px;letter-spacing:-.02em}}
-.sub-desc{{font-size:12.5px;color:var(--t2);line-height:1.8;margin-bottom:14px}}
-.sub-meta-row{{font-size:10.5px;color:var(--t3);margin-bottom:14px;display:flex;align-items:center;gap:6px}}
-.sub-sub-box{{background:var(--accent-d);border:1px solid var(--card-b);border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}}
-.sub-sub-url{{font-family:ui-monospace,monospace;font-size:10px;color:var(--accent2);word-break:break-all;flex:1;min-width:140px}}
+.sub-name{{
+  font-size:23px;font-weight:800;color:var(--text);
+  margin-bottom:6px;letter-spacing:-0.02em;
+}}
+.sub-desc{{
+  font-size:12.5px;color:var(--text2);
+  line-height:1.8;margin-bottom:14px;
+}}
+.sub-meta-row{{
+  font-size:10.5px;color:var(--text3);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}}
+.sub-sub-box{{
+  background:var(--accent-d);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  padding:12px 14px;
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+}}
+.sub-sub-url{{
+  font-family:ui-monospace,monospace;
+  font-size:10px;color:var(--accent2);
+  word-break:break-all;flex:1;min-width:140px;
+}}
 
-.stats-bar{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}}
-.stat-card{{background:var(--card);border:1px solid var(--card-b);border-radius:16px;padding:16px 17px;transition:.2s}}
-.stat-card:hover{{border-color:var(--card-bh);transform:translateY(-1px)}}
-.stat-label{{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}}
-.stat-val{{font-size:22px;font-weight:800;color:var(--t1);line-height:1;letter-spacing:-.01em}}
-.stat-sub{{font-size:9.5px;color:var(--t3);margin-top:6px}}
+/* ── آمار ── */
+.stats-bar{{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;margin-bottom:18px;
+}}
+.stat-card{{
+  background:var(--glass);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:16px 17px;
+  transition:var(--transition);
+}}
+.stat-card:hover{{
+  border-color:rgba(255,255,255,0.06);
+  transform:translateY(-1px);
+}}
+.stat-label{{
+  font-size:9px;color:var(--text3);
+  font-weight:700;text-transform:uppercase;
+  letter-spacing:0.07em;margin-bottom:7px;
+}}
+.stat-val{{
+  font-size:22px;font-weight:800;color:var(--text);
+  line-height:1;letter-spacing:-0.01em;
+}}
+.stat-sub{{font-size:9.5px;color:var(--text3);margin-top:6px}}
 
-.copy-all-bar{{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,var(--accent) 0%,#2952C8 100%);border-radius:18px;padding:16px 19px;margin-bottom:18px;box-shadow:0 10px 30px rgba(59,124,246,.28);flex-wrap:wrap}}
+/* ── کپی همه ── */
+.copy-all-bar{{
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(120deg,var(--accent) 0%,#7a5cf0 100%);
+  border-radius:20px;padding:16px 19px;
+  margin-bottom:18px;
+  box-shadow:0 10px 40px rgba(91,141,239,0.15);
+  flex-wrap:wrap;
+}}
 .copy-all-text{{flex:1;min-width:160px}}
-.copy-all-title{{font-size:13.5px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}}
-.copy-all-sub{{font-size:10px;color:rgba(255,255,255,.78);margin-top:3px}}
-.copy-all-btn{{background:#fff;color:#1D4ED8;border:none;border-radius:12px;padding:10px 19px;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.18s;white-space:nowrap}}
-.copy-all-btn:hover{{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.22)}}
-.copy-all-btn:active{{transform:translateY(0) scale(.98)}}
+.copy-all-title{{
+  font-size:13.5px;font-weight:800;color:#fff;
+  display:flex;align-items:center;gap:6px;
+}}
+.copy-all-sub{{font-size:10px;color:rgba(255,255,255,0.75);margin-top:3px}}
+.copy-all-btn{{
+  background:#fff;color:#1D4ED8;
+  border:none;border-radius:14px;
+  padding:10px 20px;
+  font-family:inherit;font-size:12.5px;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:var(--transition);white-space:nowrap;
+}}
+.copy-all-btn:hover{{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+}}
+.copy-all-btn:active{{transform:translateY(0) scale(0.97)}}
 
-.cfg-title{{font-size:12px;font-weight:800;color:var(--t2);margin-bottom:13px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.07em}}
+/* ── جستجو و نوار ابزار ── */
+.toolbar{{
+  display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+  margin-bottom:16px;flex-wrap:wrap;
+}}
+.toolbar-left{{display:flex;align-items:center;gap:8px}}
+.cfg-title{{
+  font-size:12px;font-weight:800;color:var(--text2);
+  display:flex;align-items:center;gap:6px;
+  text-transform:uppercase;letter-spacing:0.07em;
+}}
 .cfg-title i{{color:var(--accent);font-size:15px}}
+.search-box{{position:relative;min-width:180px;flex:1}}
+.search-box input{{
+  width:100%;padding:8px 36px 8px 12px;
+  border-radius:12px;border:1px solid var(--glass-border);
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  color:var(--text);
+  font-family:inherit;font-size:11.5px;
+  outline:none;transition:var(--transition);
+}}
+.search-box input:focus{{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-d);
+}}
+.search-box i{{
+  position:absolute;right:10px;top:50%;
+  transform:translateY(-50%);
+  color:var(--text3);font-size:13px;
+}}
+.export-btns{{display:flex;gap:5px}}
+.btn-sm{{padding:6px 12px;font-size:10.5px;border-radius:10px}}
+
+/* ── کارت‌های کانفیگ ── */
 .cfg-grid{{display:grid;gap:13px}}
 
-/* ── کارت کانفیگ به‌شکل بلیط دسترسی (signature element) ── */
-.cfg-card{{background:var(--card);border:1px solid var(--card-b);border-radius:18px;transition:all .2s;position:relative;overflow:hidden}}
-.cfg-card:hover{{border-color:var(--card-bh);box-shadow:var(--shadow)}}
-.cfg-top{{padding:17px 19px 15px;position:relative}}
-.cfg-top::after{{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:var(--green)}}
+.cfg-card{{
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  transition:var(--transition);
+  position:relative;overflow:hidden;
+}}
+.cfg-card:hover{{
+  border-color:rgba(255,255,255,0.06);
+  box-shadow:var(--shadow);
+}}
+.cfg-top{{
+  padding:17px 19px 15px;
+  position:relative;
+}}
+.cfg-top::after{{
+  content:'';
+  position:absolute;top:0;right:0;
+  width:3px;height:100%;
+  background:var(--green);
+}}
 .cfg-card.inactive .cfg-top::after{{background:var(--red)}}
-.cfg-head{{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}}
-.cfg-label{{font-size:14.5px;font-weight:700;color:var(--t1)}}
-.cfg-badges{{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}}
-.proto-chip{{font-size:9px;padding:3px 8px;border-radius:7px;font-weight:800;letter-spacing:.02em}}
+.cfg-card.expired .cfg-top::after{{background:var(--amber)}}
+
+.cfg-head{{
+  display:flex;align-items:flex-start;
+  justify-content:space-between;gap:8px;
+  margin-bottom:12px;flex-wrap:wrap;
+}}
+.cfg-label{{
+  font-size:14.5px;font-weight:700;color:var(--text);
+}}
+.cfg-badges{{
+  display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;
+}}
+.proto-chip{{
+  font-size:9px;padding:3px 10px;border-radius:8px;
+  font-weight:800;letter-spacing:0.02em;
+}}
 .pc-ws{{background:var(--accent-d);color:var(--accent2)}}
 .pc-xhttp{{background:var(--purple-bg);color:var(--purple-t)}}
 .pc-ultra{{background:var(--green-bg);color:var(--green-t)}}
-.cfg-status{{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}}
+
+.cfg-status{{
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:700;
+  padding:4px 12px;border-radius:20px;
+  white-space:nowrap;
+}}
 .cfg-status.ok{{background:var(--green-bg);color:var(--green-t)}}
 .cfg-status.no{{background:var(--red-bg);color:var(--red-t)}}
-.cfg-usage{{margin-bottom:4px}}
-.ubar{{height:6px;border-radius:4px;background:rgba(96,148,246,0.1);overflow:hidden;margin-bottom:5px}}
-.ubar-f{{height:100%;border-radius:4px;transition:width .5s ease}}
-.utxt{{font-size:10px;color:var(--t3);display:flex;justify-content:space-between}}
+.cfg-status.warn{{background:var(--amber-bg);color:var(--amber-t)}}
 
-/* خط جداکننده‌ی بلیطی با دندانه‌های گرد، شبیه پاره‌خط بُرد بلیط */
-.cfg-tear{{position:relative;height:0;border-top:1.5px dashed var(--card-b);margin:0 19px}}
-.cfg-tear::before,.cfg-tear::after{{content:'';position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--bg);transform:translateY(-50%);border:1px solid var(--card-b)}}
+.cfg-exp{{
+  font-size:10px;font-weight:700;margin-top:4px;
+  display:flex;align-items:center;gap:4px;
+}}
+.cfg-exp.ok{{color:var(--green-t)}}
+.cfg-exp.warn{{color:var(--amber-t)}}
+.cfg-exp.exp{{color:var(--red-t)}}
+
+.cfg-usage{{margin-bottom:4px}}
+.ubar{{
+  height:6px;border-radius:6px;
+  background:rgba(255,255,255,0.02);
+  overflow:hidden;margin-bottom:5px;
+}}
+.ubar-f{{
+  height:100%;border-radius:6px;
+  transition:width 0.5s ease;
+}}
+.utxt{{
+  font-size:10px;color:var(--text3);
+  display:flex;justify-content:space-between;
+}}
+
+.cfg-details{{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:6px;margin-top:9px;
+  padding:8px 10px;
+  background:var(--accent-d);
+  border-radius:10px;
+  font-size:9.5px;color:var(--text3);
+}}
+.cfg-details-item{{display:flex;align-items:center;gap:4px}}
+.cfg-details-item i{{font-size:11px;color:var(--accent2)}}
+.cfg-details-item span{{font-weight:600;color:var(--text2)}}
+
+/* ── خط جداکننده بلیطی ── */
+.cfg-tear{{
+  position:relative;height:0;
+  border-top:1.5px dashed var(--glass-border);
+  margin:0 19px;
+}}
+.cfg-tear::before,.cfg-tear::after{{
+  content:'';
+  position:absolute;top:50%;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--bg);
+  transform:translateY(-50%);
+  border:1px solid var(--glass-border);
+}}
 .cfg-tear::before{{right:-28px}}
 .cfg-tear::after{{left:-28px}}
 
 .cfg-bottom{{padding:15px 19px 18px}}
-.cfg-link-toggle{{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:transparent;border:1px dashed var(--card-b);border-radius:11px;padding:10px 13px;cursor:pointer;font-family:inherit;color:var(--t2);font-size:11.5px;font-weight:600;transition:.15s}}
-.cfg-link-toggle:hover{{background:var(--accent-d);border-color:var(--card-bh);color:var(--accent2)}}
+.cfg-link-toggle{{
+  width:100%;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;
+  background:transparent;
+  border:1px dashed var(--glass-border);
+  border-radius:12px;
+  padding:10px 13px;
+  cursor:pointer;
+  font-family:inherit;
+  color:var(--text2);
+  font-size:11.5px;font-weight:600;
+  transition:var(--transition);
+}}
+.cfg-link-toggle:hover{{
+  background:var(--accent-d);
+  border-color:rgba(255,255,255,0.06);
+  color:var(--accent2);
+}}
 .cfg-link-toggle .ltl{{display:flex;align-items:center;gap:7px}}
-.cfg-link-toggle i.ti-chevron-down{{transition:transform .2s}}
+.cfg-link-toggle i.ti-chevron-down{{transition:transform 0.2s}}
 .cfg-link-toggle.open i.ti-chevron-down{{transform:rotate(180deg)}}
-.cfg-vless-wrap{{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}}
+
+.cfg-vless-wrap{{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows 0.25s ease;
+}}
 .cfg-vless-wrap.open{{grid-template-rows:1fr}}
 .cfg-vless-inner{{overflow:hidden}}
-.cfg-vless{{background:rgba(0,0,0,.22);border:1px solid var(--card-b);border-radius:10px;padding:11px 13px;font-size:9.8px;font-family:ui-monospace,monospace;color:var(--accent2);word-break:break-all;line-height:1.7;margin-top:9px;max-height:90px;overflow-y:auto}}
-[data-theme="light"] .cfg-vless{{background:rgba(46,99,214,.05)}}
-.cfg-actions{{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}}
-.btn{{font-family:inherit;font-size:11.5px;font-weight:700;border-radius:10px;padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:none;transition:all .15s;white-space:nowrap}}
+.cfg-vless{{
+  background:rgba(0,0,0,0.08);
+  border:1px solid var(--glass-border);
+  border-radius:10px;
+  padding:11px 13px;
+  font-size:9.8px;
+  font-family:ui-monospace,monospace;
+  color:var(--accent2);
+  word-break:break-all;
+  line-height:1.7;
+  margin-top:9px;
+  max-height:90px;
+  overflow-y:auto;
+}}
+[data-theme="light"] .cfg-vless{{background:rgba(0,0,0,0.03)}}
+
+.cfg-actions{{
+  display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;
+}}
+
+/* ── دکمه‌ها ── */
+.btn{{
+  font-family:inherit;font-size:11.5px;font-weight:700;
+  border-radius:12px;padding:8px 16px;
+  cursor:pointer;display:inline-flex;align-items:center;gap:5px;
+  border:none;transition:var(--transition);white-space:nowrap;
+}}
 .btn i{{font-size:13px}}
-.btn-p{{background:linear-gradient(135deg,#2F8FFF,#8B5CF6);color:#fff;box-shadow:0 3px 14px rgba(139,92,246,.35)}}
-.btn-p:hover{{background:var(--accent2)}}
-.btn-g{{background:var(--accent-d);color:var(--accent2);border:1px solid rgba(96,148,246,.16)}}
-.btn-g:hover{{background:rgba(96,148,246,.2)}}
-.btn-pur{{background:var(--purple-bg);color:var(--purple-t);border:1px solid rgba(157,123,240,.2)}}
-.btn-pur:hover{{background:rgba(157,123,240,.22)}}
-.conn-chip{{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;padding:3px 8px;border-radius:20px;background:var(--green-bg);color:var(--green-t);font-weight:700}}
-.dot{{width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}}
+.btn-p{{
+  background:linear-gradient(135deg,var(--accent),#7a5cf0);
+  color:#fff;
+  box-shadow:0 4px 16px rgba(91,141,239,0.15);
+}}
+.btn-p:hover{{transform:translateY(-1px);box-shadow:0 6px 24px rgba(91,141,239,0.25)}}
+.btn-g{{
+  background:var(--accent-d);
+  color:var(--accent2);
+  border:1px solid rgba(91,141,239,0.04);
+}}
+.btn-g:hover{{background:rgba(91,141,239,0.12)}}
+.btn-pur{{
+  background:var(--purple-bg);
+  color:var(--purple-t);
+  border:1px solid rgba(167,139,250,0.04);
+}}
+.btn-pur:hover{{background:rgba(167,139,250,0.12)}}
+
+.conn-chip{{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:9.5px;padding:3px 10px;border-radius:20px;
+  background:var(--green-bg);color:var(--green-t);font-weight:700;
+}}
+.dot{{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--green);display:inline-block;
+  animation:pulse 2s infinite;
+}}
 @keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.25}}}}
 
-/* ── صفحه‌ی قفل / رمز ── */
-.lock-stage{{display:flex;align-items:center;justify-content:center;min-height:78vh;padding:20px 0}}
-.lock-card{{background:var(--card);border:1px solid var(--card-b);border-radius:26px;padding:0;text-align:center;max-width:380px;width:100%;box-shadow:var(--shadow);overflow:hidden;position:relative}}
-.lock-banner{{background:linear-gradient(150deg,rgba(59,124,246,.16),rgba(59,124,246,.02) 70%);padding:38px 30px 26px;position:relative}}
-.lock-shield{{width:64px;height:64px;border-radius:18px;background:var(--accent-d);border:1px solid var(--card-bh);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;position:relative}}
-.lock-shield::after{{content:'';position:absolute;inset:-7px;border-radius:22px;border:1px solid var(--card-b);animation:breathe 2.6s ease-in-out infinite}}
-@keyframes breathe{{0%,100%{{transform:scale(1);opacity:.5}}50%{{transform:scale(1.08);opacity:0}}}}
+/* ── صفحه قفل ── */
+.lock-stage{{
+  display:flex;align-items:center;justify-content:center;
+  min-height:78vh;padding:20px 0;
+}}
+.lock-card{{
+  background:var(--glass);
+  backdrop-filter:blur(32px);
+  -webkit-backdrop-filter:blur(32px);
+  border:1px solid var(--glass-border);
+  border-radius:28px;
+  padding:0;
+  text-align:center;max-width:380px;
+  width:100%;box-shadow:var(--shadow);
+  overflow:hidden;position:relative;
+}}
+.lock-banner{{
+  background:linear-gradient(150deg,var(--accent-d),transparent 70%);
+  padding:38px 30px 26px;
+  position:relative;
+}}
+.lock-shield{{
+  width:64px;height:64px;
+  border-radius:18px;
+  background:var(--accent-d);
+  border:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;
+  position:relative;
+}}
+.lock-shield::after{{
+  content:'';
+  position:absolute;inset:-7px;
+  border-radius:22px;
+  border:1px solid var(--glass-border);
+  animation:breathe 2.6s ease-in-out infinite;
+}}
+@keyframes breathe{{0%,100%{{transform:scale(1);opacity:0.5}}50%{{transform:scale(1.08);opacity:0}}}}
 .lock-shield i{{font-size:28px;color:var(--accent2)}}
-.lock-title{{font-size:18px;font-weight:800;margin-bottom:6px;color:var(--t1);letter-spacing:-.01em}}
-.lock-sub{{font-size:12px;color:var(--t3);line-height:1.7}}
+.lock-title{{font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text);letter-spacing:-0.01em}}
+.lock-sub{{font-size:12px;color:var(--text3);line-height:1.7}}
 .lock-form{{padding:24px 30px 30px}}
 .lock-field{{position:relative;margin-bottom:13px}}
-.lock-inp{{width:100%;padding:13px 44px 13px 44px;border-radius:13px;border:1px solid var(--card-b);background:rgba(0,0,0,.2);color:var(--t1);font-family:inherit;font-size:14px;outline:none;text-align:center;letter-spacing:.14em;transition:.18s}}
-[data-theme="light"] .lock-inp{{background:rgba(46,99,214,.04)}}
-.lock-inp:focus{{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-d)}}
-.lock-eye{{position:absolute;left:13px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:4px;display:flex}}
+.lock-inp{{
+  width:100%;padding:13px 44px 13px 44px;
+  border-radius:14px;border:1px solid var(--glass-border);
+  background:rgba(0,0,0,0.06);
+  color:var(--text);
+  font-family:inherit;font-size:14px;
+  outline:none;text-align:center;
+  letter-spacing:0.14em;transition:var(--transition);
+}}
+.lock-inp:focus{{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-d);
+}}
+.lock-eye{{
+  position:absolute;left:13px;top:50%;
+  transform:translateY(-50%);
+  background:none;border:none;
+  color:var(--text3);cursor:pointer;
+  font-size:16px;padding:4px;display:flex;
+}}
 .lock-eye:hover{{color:var(--accent2)}}
-.lock-lockicon{{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:15px;pointer-events:none}}
-.lock-err{{color:var(--red-t);font-size:11.5px;margin-bottom:10px;min-height:16px;display:flex;align-items:center;justify-content:center;gap:5px}}
-.lock-btn{{width:100%;justify-content:center;padding:13px;font-size:13px;border-radius:13px}}
-.lock-footer{{padding:14px 30px;border-top:1px solid var(--card-b);font-size:10px;color:var(--t3);display:flex;align-items:center;justify-content:center;gap:6px}}
+.lock-lockicon{{
+  position:absolute;right:14px;top:50%;
+  transform:translateY(-50%);
+  color:var(--text3);font-size:15px;pointer-events:none;
+}}
+.lock-err{{
+  color:var(--red-t);font-size:11.5px;
+  margin-bottom:10px;min-height:16px;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}}
+.lock-btn{{width:100%;justify-content:center;padding:13px;font-size:13px;border-radius:14px}}
+.lock-footer{{
+  padding:14px 30px;border-top:1px solid var(--glass-border);
+  font-size:10px;color:var(--text3);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}}
 
-.empty-state{{text-align:center;padding:80px 20px;color:var(--t3)}}
+.empty-state{{
+  text-align:center;padding:80px 20px;
+  color:var(--text3);
+}}
 .empty-state i{{font-size:38px;display:block;margin-bottom:14px}}
 
-.toast{{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--card);border:1px solid var(--card-b);color:var(--t1);border-radius:12px;padding:10px 20px;font-size:12.5px;font-weight:600;opacity:0;transition:all .25s;z-index:999;pointer-events:none;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow);white-space:nowrap}}
+.toast{{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(40px);
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  color:var(--text);
+  border-radius:14px;
+  padding:10px 22px;font-size:12.5px;font-weight:600;
+  opacity:0;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  z-index:999;pointer-events:none;
+  display:flex;align-items:center;gap:7px;
+  box-shadow:var(--shadow);
+  white-space:nowrap;
+}}
 .toast.show{{opacity:1;transform:translateX(-50%) translateY(0)}}
-.toast.ok{{border-color:rgba(31,184,126,.35);background:var(--green-bg);color:var(--green-t)}}
+.toast.ok{{border-color:rgba(45,212,160,0.1);background:var(--green-bg);color:var(--green-t)}}
+.toast.err{{border-color:rgba(248,113,113,0.1);background:var(--red-bg);color:var(--red-t)}}
 
-.qr-modal{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:20px}}
+.qr-modal{{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(8px);
+  z-index:600;align-items:center;justify-content:center;
+  padding:20px;
+}}
 .qr-modal.open{{display:flex}}
-.qr-box{{background:var(--card);border:1px solid var(--card-b);border-radius:22px;padding:26px;text-align:center;max-width:340px;width:100%;box-shadow:var(--shadow)}}
-.qr-title{{font-size:13.5px;font-weight:800;margin-bottom:16px;color:var(--t1)}}
+.qr-box{{
+  background:var(--glass);
+  backdrop-filter:blur(32px);
+  -webkit-backdrop-filter:blur(32px);
+  border:1px solid var(--glass-border);
+  border-radius:24px;
+  padding:26px;text-align:center;
+  max-width:340px;width:100%;
+  box-shadow:var(--shadow);
+}}
+.qr-title{{font-size:13.5px;font-weight:800;margin-bottom:16px;color:var(--text)}}
 .qr-img{{border-radius:14px;overflow:hidden;margin-bottom:15px}}
 .qr-img img{{width:100%;display:block;background:#fff;padding:10px;border-radius:14px}}
 
-.footer{{text-align:center;padding-top:28px;font-size:10.5px;color:var(--t3)}}
+.footer{{
+  text-align:center;padding-top:28px;
+  font-size:10.5px;color:var(--text3);
+}}
 .footer a{{color:var(--accent2);font-weight:700}}
 
-@media(max-width:520px){{
+/* ── ریسپانسیو ── */
+@media(max-width:640px){{
   .stats-bar{{grid-template-columns:1fr 1fr}}
-  .stats-bar .stat-card:nth-child(3){{grid-column:1/-1}}
   .sub-name{{font-size:19px}}
   .copy-all-bar{{flex-direction:column;align-items:stretch}}
   .copy-all-btn{{justify-content:center}}
   .wrap{{padding:16px 12px 50px}}
   .lock-banner{{padding:32px 22px 22px}}
   .lock-form{{padding:20px 22px 26px}}
+  .cfg-details{{grid-template-columns:1fr}}
+  .toolbar{{flex-direction:column;align-items:stretch}}
+  .search-box{{min-width:unset}}
+  .export-btns{{justify-content:flex-start}}
+}}
+@media(max-width:420px){{
+  .stats-bar{{grid-template-columns:1fr}}
 }}
 @keyframes spin{{to{{transform:rotate(360deg)}}}}
 </style>
 </head>
 <body>
 <div class="bg-fx"></div><div class="grid-fx"></div>
+
 <div class="toast" id="toast"></div>
+
 <div class="qr-modal" id="qr-modal" onclick="this.classList.remove('open')">
   <div class="qr-box" onclick="event.stopPropagation()">
     <div class="qr-title" id="qr-label">QR Code</div>
@@ -2808,6 +3303,7 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
     <button class="btn btn-g" style="width:100%;justify-content:center" onclick="document.getElementById('qr-modal').classList.remove('open')"><i class="ti ti-x"></i> بستن</button>
   </div>
 </div>
+
 <div class="wrap">
   <div class="top">
     <div class="brand">
@@ -2816,17 +3312,20 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
     </div>
     <div class="top-actions">
       <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="تغییر تم"><i class="ti ti-sun" id="theme-icon"></i></button>
-      
     </div>
   </div>
+
   <div id="root">
     <div class="empty-state"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>در حال بارگذاری...</div>
   </div>
+
   <div class="footer">پشتیبانی: <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a> · X4G v9.5</div>
 </div>
+
 <script>
 const UUID_KEY='{uuid_key}';
 let savedPw='';
+let allLinksData=[];
 
 let isDark=localStorage.getItem('x4g-pub-theme')!=='light';
 function applyTheme(dark){{
@@ -2844,10 +3343,30 @@ function toast(msg,type=''){{
 function esc(s){{return String(s||'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]))}}
 function fmtB(b){{if(!b||b===0)return '0 B';if(b<1024)return b+' B';if(b<1024**2)return (b/1024).toFixed(1)+' KB';if(b<1024**3)return (b/1024**2).toFixed(2)+' MB';return (b/1024**3).toFixed(2)+' GB'}}
 function toFa(n){{return String(n).replace(/\\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}}
+function daysLeft(exp){{
+  if(!exp)return null;
+  const diff=Math.ceil((new Date(exp)-Date.now())/(864e5));
+  return diff;
+}}
+function expText(exp){{
+  if(!exp)return '<span class="cfg-exp ok"><i class="ti ti-infinity"></i> نامحدود</span>';
+  const d=daysLeft(exp);
+  if(d<=0)return '<span class="cfg-exp exp"><i class="ti ti-calendar-x"></i> منقضی شده</span>';
+  if(d<=3)return '<span class="cfg-exp warn"><i class="ti ti-alert-triangle"></i> '+toFa(d)+' روز مانده</span>';
+  if(d<=7)return '<span class="cfg-exp warn"><i class="ti ti-clock"></i> '+toFa(d)+' روز مانده</span>';
+  return '<span class="cfg-exp ok"><i class="ti ti-calendar-check"></i> '+toFa(d)+' روز مانده</span>';
+}}
 function protoChip(p){{
   if(p==='xhttp-stream-one')return '<span class="proto-chip pc-ultra"><i class="ti ti-bolt"></i> XHTTP ULTRA</span>';
-  if(p&&p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';
+  if(p&&p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p).replace('xhttp-','')+'</span>';
   return '<span class="proto-chip pc-ws">VLESS · WS</span>';
+}}
+function statusText(l){{
+  if(!l.active)return '<span class="cfg-status no"><i class="ti ti-circle-x"></i> غیرفعال</span>';
+  if(l.expired)return '<span class="cfg-status warn"><i class="ti ti-alert-triangle"></i> منقضی</span>';
+  const pct=l.limit_bytes===0?0:Math.min(100,l.used_bytes/l.limit_bytes*100);
+  if(pct>=90)return '<span class="cfg-status warn"><i class="ti ti-alert-triangle"></i> نزدیک به اتمام</span>';
+  return '<span class="cfg-status ok"><i class="ti ti-circle-check"></i> فعال</span>';
 }}
 
 function showQR(label,link){{
@@ -2862,6 +3381,48 @@ function toggleLink(i){{
   const open=wrap.classList.toggle('open');
   btn.classList.toggle('open',open);
   btn.querySelector('.ltl span').textContent = open ? 'پنهان کردن لینک' : 'نمایش لینک کانفیگ';
+}}
+
+function filterLinks(q){{
+  q=q.trim().toLowerCase();
+  document.querySelectorAll('.cfg-card').forEach(card=>{{
+    const label=card.dataset.label||'';
+    const note=card.dataset.note||'';
+    const visible=!q||label.includes(q)||note.includes(q);
+    card.style.display=visible?'':'none';
+  }});
+}}
+
+function copySubLink(subUrl){{
+  const url=subUrl+(savedPw?'?pw='+encodeURIComponent(savedPw):'');
+  navigator.clipboard.writeText(url).then(()=>toast('لینک ساب کپی شد ✓','ok'));
+}}
+
+function copySubBase64(subUrl){{
+  const url=subUrl+(savedPw?'?pw='+encodeURIComponent(savedPw):'');
+  const b64=btoa(url);
+  navigator.clipboard.writeText(b64).then(()=>toast('لینک ساب (Base64) کپی شد ✓','ok'));
+}}
+
+function exportJSON(){{
+  const links=window._x4gLinks||[];
+  if(!links.length){{toast('کانفیگی برای خروجی نیست','err');return}}
+  const data=links.map(l=>({{label:l.label,vless:l.vless,sub:l.sub}}));
+  navigator.clipboard.writeText(JSON.stringify(data,null,2))
+    .then(()=>toast('JSON کپی شد ✓','ok'));
+}}
+
+function exportYAML(){{
+  const links=window._x4gLinks||[];
+  if(!links.length){{toast('کانفیگی برای خروجی نیست','err');return}}
+  let yaml='# X4G Configs\\n';
+  links.forEach((l,i)=>{{
+    yaml+=`\\n${{i+1}}:
+  label: ${{l.label}}
+  vless: ${{l.vless}}
+  sub: ${{l.sub}}\\n`;
+  }});
+  navigator.clipboard.writeText(yaml).then(()=>toast('YAML کپی شد ✓','ok'));
 }}
 
 async function loadData(pw=''){{
@@ -2913,7 +3474,8 @@ async function submitLock(){{
 }}
 
 function renderContent(d){{
-  const activeCount=d.links.filter(l=>l.active).length;
+  allLinksData=d.links;
+  const activeCount=d.links.filter(l=>l.active&&!l.expired).length;
   const baseSubUrl = d.sub_url || (window.location.protocol + '//' + window.location.host + '/sub-group/' + UUID_KEY);
   const subUrl = baseSubUrl + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '');
 
@@ -2930,15 +3492,22 @@ function renderContent(d){{
       <div class="sub-eyebrow"><i class="ti ti-folders"></i> گروه دسترسی</div>
       <div class="sub-name">${{esc(d.name)}}</div>
       ${{d.desc ? `<div class="sub-desc">${{esc(d.desc)}}</div>` : ''}}
-      <div class="sub-meta-row"><i class="ti ti-clock"></i> آخرین بروزرسانی: ${{new Date().toLocaleTimeString('fa-IR')}}</div>
+      <div class="sub-meta-row">
+        <i class="ti ti-clock"></i> آخرین بروزرسانی: ${{new Date().toLocaleTimeString('fa-IR')}}
+        <span style="margin-right:12px"><i class="ti ti-calendar"></i> ${{new Date(d.updated_at||Date.now()).toLocaleDateString('fa-IR')}}</span>
+      </div>
       <div class="sub-sub-box">
         <span class="sub-sub-url">${{esc(subUrl)}}</span>
         <button class="btn btn-pur" style="padding:7px 12px;font-size:10.5px"
-          onclick="navigator.clipboard.writeText(window._x4gSubUrl).then(()=>toast('لینک ساب کپی شد ✓','ok'))">
+          onclick="copySubLink('${{esc(baseSubUrl)}}')">
           <i class="ti ti-copy"></i> کپی لینک ساب
         </button>
+        <button class="btn btn-pur" style="padding:7px 12px;font-size:10.5px"
+          onclick="copySubBase64('${{esc(baseSubUrl)}}')">
+          <i class="ti ti-base64"></i> Base64
+        </button>
         <button class="btn btn-g" style="padding:7px 12px;font-size:10.5px"
-          onclick="showQR(window._x4gSubName + ' — کل گروه', window._x4gSubUrl)">
+          onclick="showQR('${{esc(d.name)}} — کل گروه', '${{esc(subUrl)}}')">
           <i class="ti ti-qrcode"></i> QR کل
         </button>
       </div>
@@ -2968,16 +3537,35 @@ function renderContent(d){{
         <div class="stat-val" style="font-size:17px;margin-top:3px">${{esc(d.total_used_fmt)}}</div>
         <div class="stat-sub">همه کانفیگ‌ها</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-label">تاریخ ایجاد</div>
+        <div class="stat-val" style="font-size:14px;margin-top:3px">${{new Date(d.created_at||Date.now()).toLocaleDateString('fa-IR')}}</div>
+        <div class="stat-sub">${{d.has_password ? '🔒 رمزدار' : '🔓 عمومی'}}</div>
+      </div>
     </div>
 
-    <div class="cfg-title"><i class="ti ti-link"></i> کانفیگ‌ها (${{toFa(d.links.length)}} عدد)</div>
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="cfg-title"><i class="ti ti-link"></i> کانفیگ‌ها (${{toFa(d.links.length)}})</div>
+      </div>
+      <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input type="text" id="search-input" placeholder="جستجو در کانفیگ‌ها..." oninput="filterLinks(this.value)">
+      </div>
+      <div class="export-btns">
+        <button class="btn btn-sm btn-pur" onclick="exportJSON()"><i class="ti ti-file-code"></i> JSON</button>
+        <button class="btn btn-sm btn-pur" onclick="exportYAML()"><i class="ti ti-file-text"></i> YAML</button>
+      </div>
+    </div>
+
     <div class="cfg-grid">
       ${{d.links.map((l, i) => {{
         const pct = l.limit_bytes === 0 ? 0 : Math.min(100, l.used_bytes / l.limit_bytes * 100);
         const bc  = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--amber)' : 'var(--green)';
         const lim = l.limit_bytes === 0 ? '∞' : fmtB(l.limit_bytes);
+        const cardCls = !l.active ? 'inactive' : (l.expired ? 'expired' : '');
         return `
-          <div class="cfg-card${{l.active ? '' : ' inactive'}}">
+          <div class="cfg-card ${{cardCls}}" data-label="${{esc(l.label).toLowerCase()}}" data-note="${{esc((l.note||'').toLowerCase())}}">
             <div class="cfg-top">
               <div class="cfg-head">
                 <div>
@@ -2985,13 +3573,23 @@ function renderContent(d){{
                   <div class="cfg-badges">
                     ${{protoChip(l.protocol)}}
                     ${{l.connections > 0 ? `<span class="conn-chip"><span class="dot"></span> ${{toFa(l.connections)}} اتصال</span>` : ''}}
+                    ${{l.note ? `<span class="conn-chip" style="background:var(--accent-d);color:var(--accent2)"><i class="ti ti-note"></i> ${{esc(l.note)}}</span>` : ''}}
                   </div>
                 </div>
-                <span class="cfg-status ${{l.active ? 'ok' : 'no'}}">${{l.active ? '<i class="ti ti-circle-check"></i> فعال' : '<i class="ti ti-circle-x"></i> غیرفعال'}}</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                  ${{statusText(l)}}
+                  ${{expText(l.expires_at)}}
+                </div>
               </div>
               <div class="cfg-usage">
                 <div class="ubar"><div class="ubar-f" style="width:${{pct}}%;background:${{bc}}"></div></div>
                 <div class="utxt"><span>${{esc(l.used_fmt)}} مصرف شده</span><span>سهمیه: ${{lim}}</span></div>
+              </div>
+              <div class="cfg-details">
+                <div class="cfg-details-item"><i class="ti ti-fingerprint"></i> Fingerprint: <span>${{esc(l.fingerprint||'chrome')}}</span></div>
+                <div class="cfg-details-item"><i class="ti ti-route"></i> پورت: <span>${{l.port||443}}</span></div>
+                <div class="cfg-details-item"><i class="ti ti-calendar"></i> ساخته شده: <span>${{new Date(l.created_at).toLocaleDateString('fa-IR')}}</span></div>
+                <div class="cfg-details-item"><i class="ti ti-gauge"></i> سرعت: <span>${{l.speed_limit_bytes?((l.speed_limit_bytes*8/1024/1024).toFixed(1)+' Mbps'):'نامحدود'}}</span></div>
               </div>
             </div>
             <div class="cfg-tear"></div>
@@ -3014,6 +3612,10 @@ function renderContent(d){{
                   onclick="showQR(window._x4gLinks[${{i}}].label, window._x4gLinks[${{i}}].vless)">
                   <i class="ti ti-qrcode"></i> QR
                 </button>
+                <button class="btn btn-pur btn-sm"
+                  onclick="navigator.clipboard.writeText(window._x4gLinks[${{i}}].sub).then(()=>toast('ساب کپی شد ✓','ok'))">
+                  <i class="ti ti-rss"></i> ساب
+                </button>
               </div>
             </div>
           </div>
@@ -3026,7 +3628,7 @@ function renderContent(d){{
 
 function copyAllConfigs(){{
   const links=window._x4gLinks||[];
-  if(!links.length){{toast('کانفیگی برای کپی نیست','');return}}
+  if(!links.length){{toast('کانفیگی برای کپی نیست','err');return}}
   const text=links.map(l=>l.vless).join('\\n');
   navigator.clipboard.writeText(text).then(()=>toast('همه‌ی '+toFa(links.length)+' کانفیگ کپی شد ✓','ok'));
 }}
