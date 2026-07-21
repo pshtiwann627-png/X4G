@@ -83,24 +83,751 @@ input:focus+.ic{color:var(--accent)}
     <div class="footer">پشتیبانی <a href="https://t.me/Farajian2004f" target="_blank"><i class="ti ti-brand-telegram"></i>@Farajian2004f</a></div>
   </div>
 </div>
+LOGIN_HTML = r"""<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورود · X4G</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+/* ========================================
+   طراحی شیشه‌ای آیفونی - X4G v9.5
+   ======================================== */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  /* ── دارک ── */
+  --bg-dark:#0a0a0f;
+  --glass-dark:rgba(255,255,255,0.05);
+  --glass-border-dark:rgba(255,255,255,0.08);
+  --glass-shadow-dark:0 8px 40px rgba(0,0,0,0.6);
+  --text-dark:#f0f0f5;
+  --text-dim-dark:rgba(255,255,255,0.4);
+  --text-mid-dark:rgba(255,255,255,0.7);
+  --accent-dark:#5b8def;
+  --accent2-dark:#7aa3ff;
+  
+  /* ── روشن ── */
+  --bg-light:#e8ecf2;
+  --glass-light:rgba(255,255,255,0.6);
+  --glass-border-light:rgba(255,255,255,0.7);
+  --glass-shadow-light:0 8px 40px rgba(0,0,0,0.08);
+  --text-light:#1a1a2e;
+  --text-dim-light:rgba(0,0,0,0.3);
+  --text-mid-light:rgba(0,0,0,0.55);
+  --accent-light:#3b6fd4;
+  --accent2-light:#5a88e8;
+
+  /* ── متغیرهای جاری ── */
+  --bg:var(--bg-dark);
+  --glass:var(--glass-dark);
+  --glass-border:var(--glass-border-dark);
+  --glass-shadow:var(--glass-shadow-dark);
+  --text:var(--text-dark);
+  --text-dim:var(--text-dim-dark);
+  --text-mid:var(--text-mid-dark);
+  --accent:var(--accent-dark);
+  --accent2:var(--accent2-dark);
+  --transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+[data-theme="light"]{
+  --bg:var(--bg-light);
+  --glass:var(--glass-light);
+  --glass-border:var(--glass-border-light);
+  --glass-shadow:var(--glass-shadow-light);
+  --text:var(--text-light);
+  --text-dim:var(--text-dim-light);
+  --text-mid:var(--text-mid-light);
+  --accent:var(--accent-light);
+  --accent2:var(--accent2-light);
+}
+
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Vazirmatn',sans-serif;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  transition:var(--transition);
+}
+
+/* ── پس‌زمینه ── */
+.bg{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(91,141,239,0.12), transparent 65%),
+    var(--bg);
+  z-index:0;
+  transition:var(--transition);
+}
+
+/* ── گرید ظریف ── */
+.grid{
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size:48px 48px;
+  z-index:0;
+}
+
+/* ── دایره‌های نورانی ── */
+.orb{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(100px);
+  z-index:0;
+  animation:float 14s ease-in-out infinite;
+  opacity:0.5;
+}
+.o1{
+  width:400px;height:400px;
+  background:rgba(91,141,239,0.08);
+  top:-120px;right:-100px;
+  animation-delay:0s;
+}
+.o2{
+  width:320px;height:320px;
+  background:rgba(139,92,246,0.06);
+  bottom:-80px;left:-80px;
+  animation-delay:5s;
+}
+.o3{
+  width:200px;height:200px;
+  background:rgba(16,185,129,0.04);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  animation-delay:9s;
+  filter:blur(120px);
+}
+@keyframes float{
+  0%,100%{transform:translateY(0) scale(1)}
+  33%{transform:translateY(-30px) scale(1.05)}
+  66%{transform:translateY(20px) scale(0.95)}
+}
+
+/* ── ذرات ── */
+.particles{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden
+}
+.particle{
+  position:absolute;
+  width:2px;height:2px;
+  background:rgba(255,255,255,0.15);
+  border-radius:50%;
+  animation:twinkle var(--d) ease-in-out infinite alternate;
+}
+.particle:nth-child(1){top:10%;left:20%;--d:3s;animation-delay:0s}
+.particle:nth-child(2){top:30%;right:15%;--d:4s;animation-delay:1s}
+.particle:nth-child(3){bottom:25%;left:10%;--d:3.5s;animation-delay:0.5s}
+.particle:nth-child(4){top:60%;right:25%;--d:4.5s;animation-delay:2s}
+.particle:nth-child(5){bottom:40%;right:5%;--d:3.2s;animation-delay:0.8s}
+.particle:nth-child(6){top:15%;left:50%;--d:5s;animation-delay:1.5s}
+.particle:nth-child(7){bottom:15%;left:40%;--d:3.8s;animation-delay:0.3s}
+.particle:nth-child(8){top:45%;left:5%;--d:4.2s;animation-delay:1.8s}
+@keyframes twinkle{
+  0%{opacity:0.05;transform:scale(0.3)}
+  100%{opacity:0.5;transform:scale(1.2)}
+}
+
+/* ── کارت ورود ── */
+.wrap{
+  position:relative;
+  z-index:10;
+  width:100%;
+  max-width:400px;
+  animation:fadeUp 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px) scale(0.96)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:28px;
+  padding:44px 36px 38px;
+  box-shadow:var(--glass-shadow);
+  position:relative;
+  overflow:hidden;
+  transition:var(--transition);
+}
+
+/* ── درخشش کارت ── */
+.card-glow{
+  position:absolute;
+  top:-60px;right:-60px;
+  width:260px;height:260px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  opacity:0.06;
+  pointer-events:none;
+  animation:pulseGlow 8s ease-in-out infinite;
+}
+@keyframes pulseGlow{
+  0%,100%{transform:scale(1);opacity:0.04}
+  50%{transform:scale(1.2);opacity:0.08}
+}
+
+/* ── برند ── */
+.brand{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:32px;
+  position:relative;
+  z-index:1;
+}
+.brand-img{
+  width:56px;height:56px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid var(--glass-border);
+  box-shadow:0 0 40px rgba(91,141,239,0.15);
+  flex-shrink:0;
+  transition:var(--transition);
+}
+.brand-img img{width:100%;height:100%;object-fit:cover}
+.brand-name{
+  font-size:20px;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:-0.02em;
+  background:linear-gradient(135deg,var(--text),var(--accent2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  transition:var(--transition);
+}
+.brand-sub{
+  font-size:11px;
+  color:var(--text-dim);
+  margin-top:2px;
+  font-weight:500;
+  letter-spacing:0.04em;
+  transition:var(--transition);
+}
+
+/* ── عنوان ── */
+h1{
+  font-size:22px;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:6px;
+  letter-spacing:-0.02em;
+  position:relative;
+  z-index:1;
+  transition:var(--transition);
+}
+h1 i{color:var(--accent);margin-left:8px}
+.sub{
+  font-size:12.5px;
+  color:var(--text-mid);
+  margin-bottom:28px;
+  line-height:1.7;
+  position:relative;
+  z-index:1;
+  transition:var(--transition);
+}
+
+/* ── باکس رمز ── */
+.hint{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:rgba(91,141,239,0.06);
+  border:1px solid rgba(91,141,239,0.1);
+  border-radius:14px;
+  padding:12px 16px;
+  margin-bottom:24px;
+  position:relative;
+  z-index:1;
+  transition:var(--transition);
+}
+.hint:hover{
+  background:rgba(91,141,239,0.08);
+  border-color:rgba(91,141,239,0.18);
+}
+.hint-label{
+  font-size:11px;
+  color:var(--text-dim);
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:var(--transition);
+}
+.hint-label i{color:var(--accent);font-size:14px}
+.hint-val{
+  font-family:ui-monospace,monospace;
+  font-size:13px;
+  font-weight:700;
+  color:var(--accent);
+  background:rgba(91,141,239,0.08);
+  border:1px solid rgba(91,141,239,0.15);
+  padding:4px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:all 0.25s;
+  letter-spacing:0.06em;
+  position:relative;
+  overflow:hidden;
+}
+.hint-val::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent,rgba(91,141,239,0.08),transparent);
+  transform:translateX(-100%);
+  transition:0.6s;
+}
+.hint-val:hover::before{transform:translateX(100%)}
+.hint-val:hover{
+  background:rgba(91,141,239,0.14);
+  transform:scale(1.02);
+}
+
+/* ── فیلد رمز ── */
+.field{
+  margin-bottom:20px;
+  position:relative;
+  z-index:1;
+}
+.field label{
+  display:block;
+  font-size:10.5px;
+  font-weight:700;
+  color:var(--text-mid);
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:var(--transition);
+}
+.field label i{font-size:13px;color:var(--accent)}
+.inp-wrap{
+  position:relative;
+  border-radius:16px;
+  background:rgba(255,255,255,0.03);
+  border:1.5px solid var(--glass-border);
+  transition:var(--transition);
+}
+.inp-wrap:focus-within{
+  border-color:var(--accent);
+  background:rgba(255,255,255,0.05);
+  box-shadow:0 0 0 4px rgba(91,141,239,0.05);
+}
+input[type=password],input[type=text]{
+  width:100%;
+  padding:14px 48px 14px 18px;
+  border:none;
+  background:transparent;
+  color:var(--text);
+  font-family:inherit;
+  font-size:14px;
+  outline:none;
+  letter-spacing:0.02em;
+  transition:var(--transition);
+}
+input[type=password]::placeholder,input[type=text]::placeholder{
+  color:var(--text-dim);
+  opacity:0.5;
+}
+.ic{
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-dim);
+  font-size:17px;
+  pointer-events:none;
+  transition:var(--transition);
+}
+.inp-wrap:focus-within .ic{color:var(--accent);transform:translateY(-50%) scale(1.05)}
+
+/* ── دکمه نمایش رمز ── */
+.pw-toggle{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  color:var(--text-dim);
+  cursor:pointer;
+  font-size:17px;
+  padding:4px;
+  transition:var(--transition);
+  display:flex;
+  align-items:center;
+  z-index:2;
+}
+.pw-toggle:hover{color:var(--accent2);transform:translateY(-50%) scale(1.05)}
+
+/* ── خطا ── */
+.err{
+  display:none;
+  background:rgba(239,68,68,0.06);
+  border:1px solid rgba(239,68,68,0.12);
+  border-radius:14px;
+  padding:12px 16px;
+  margin-bottom:16px;
+  font-size:12px;
+  color:#f87171;
+  align-items:center;
+  gap:10px;
+  animation:shake 0.4s ease;
+  position:relative;
+  z-index:1;
+}
+.err.show{display:flex}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+.err i{font-size:17px}
+
+/* ── دکمه ورود ── */
+.btn{
+  width:100%;
+  padding:15px;
+  border-radius:16px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),#7a5cf0);
+  color:#fff;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  box-shadow:0 6px 30px rgba(91,141,239,0.25);
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+  overflow:hidden;
+  z-index:1;
+}
+.btn::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02));
+  opacity:0;
+  transition:0.4s;
+}
+.btn:hover::before{opacity:1}
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 40px rgba(91,141,239,0.35);
+}
+.btn:active{transform:translateY(0) scale(0.98)}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn i{font-size:17px;transition:0.3s}
+.btn:hover i{transform:translateX(-4px)}
+
+/* ── بارگذاری ── */
+.loading-dots{
+  display:inline-flex;
+  gap:4px;
+  align-items:center;
+}
+.loading-dots span{
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#fff;
+  animation:dotBounce 1.2s ease-in-out infinite;
+}
+.loading-dots span:nth-child(2){animation-delay:0.2s}
+.loading-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes dotBounce{
+  0%,80%,100%{transform:scale(0.5);opacity:0.3}
+  40%{transform:scale(1);opacity:1}
+}
+
+/* ── فوتر ── */
+.footer{
+  margin-top:28px;
+  padding-top:20px;
+  border-top:1px solid var(--glass-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-size:11px;
+  color:var(--text-dim);
+  position:relative;
+  z-index:1;
+  transition:var(--transition);
+}
+.footer a{
+  color:var(--accent);
+  font-weight:600;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  transition:all 0.3s;
+  padding:4px 10px;
+  border-radius:10px;
+}
+.footer a:hover{
+  background:rgba(91,141,239,0.06);
+  color:var(--accent2);
+  transform:translateY(-1px);
+}
+.footer .divider{
+  width:1px;
+  height:16px;
+  background:var(--glass-border);
+}
+
+/* ── نسخه ── */
+.version-badge{
+  position:fixed;
+  bottom:24px;right:24px;
+  z-index:5;
+  font-size:10px;
+  color:var(--text-dim);
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  padding:6px 16px;
+  border-radius:24px;
+  border:1px solid var(--glass-border);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:var(--transition);
+}
+.version-badge i{font-size:11px;color:var(--accent)}
+
+/* ── دکمه تم ── */
+.theme-toggle{
+  position:fixed;
+  top:24px;right:24px;
+  z-index:5;
+  width:40px;height:40px;
+  border-radius:50%;
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  color:var(--text-mid);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  transition:all 0.3s;
+}
+.theme-toggle:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.08);
+  color:var(--accent);
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── ریسپانسیو ── */
+@media(max-width:480px){
+  .card{padding:32px 22px 28px}
+  .brand-img{width:44px;height:44px}
+  .brand-name{font-size:17px}
+  h1{font-size:19px}
+  .version-badge{bottom:16px;right:16px;padding:4px 12px;font-size:9px}
+  .theme-toggle{top:16px;right:16px;width:36px;height:36px;font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid"></div>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="orb o3"></div>
+
+<div class="particles">
+  <span class="particle"></span>
+  <span class="particle"></span>
+  <span class="particle"></span>
+  <span class="particle"></span>
+  <span class="particle"></span>
+  <span class="particle"></span>
+  <span class="particle"></span>
+  <span class="particle"></span>
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()" title="تغییر تم">
+  <i class="ti ti-sun" id="theme-icon"></i>
+</button>
+
+<div class="version-badge"><i class="ti ti-rocket"></i> X4G v9.5</div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="card-glow"></div>
+    <div class="brand">
+      <div class="brand-img"><img src="data:image/png;base64,__LOGO_B64__" alt="X4G"></div>
+      <div>
+        <div class="brand-name">X4G</div>
+        <div class="brand-sub">⚡ پنل مدیریت پیشرفته</div>
+      </div>
+    </div>
+    <h1><i class="ti ti-shield-lock"></i> ورود به پنل</h1>
+    <p class="sub">🔐 رمز عبور را برای دسترسی به داشبورد وارد کنید</p>
+
+    <div class="err" id="err"><i class="ti ti-alert-circle"></i><span id="err-text"></span></div>
+
+    <div class="hint">
+      <span class="hint-label"><i class="ti ti-key"></i> رمز پیش‌فرض سیستم</span>
+      <span class="hint-val" onclick="fillPassword('X4GKING')">X4GKING</span>
+    </div>
+
+    <form id="form" autocomplete="off">
+      <div class="field">
+        <label><i class="ti ti-lock"></i> رمز عبور</label>
+        <div class="inp-wrap">
+          <input type="password" id="pw" placeholder="••••••••" autofocus required>
+          <button type="button" class="pw-toggle" onclick="togglePassword()" title="نمایش/مخفی کردن رمز">
+            <i class="ti ti-eye" id="pw-eye"></i>
+          </button>
+          <i class="ti ti-key ic"></i>
+        </div>
+      </div>
+      <button class="btn" type="submit" id="btn">
+        <i class="ti ti-login-2"></i>
+        <span id="btn-text">ورود به داشبورد</span>
+      </button>
+    </form>
+
+    <div class="footer">
+      <span>پشتیبانی</span>
+      <span class="divider"></span>
+      <a href="https://t.me/Farajian2004f" target="_blank">
+        <i class="ti ti-brand-telegram"></i> @Farajian2004f
+      </a>
+    </div>
+  </div>
+</div>
+
 <script>
-document.getElementById('form').addEventListener('submit',async e=>{
+// ── تم ──
+let isDark = localStorage.getItem('x4g-theme') !== 'light';
+function applyTheme(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.getElementById('theme-icon').className = 'ti ' + (dark ? 'ti-sun' : 'ti-moon');
+}
+function toggleTheme() {
+  isDark = !isDark;
+  localStorage.setItem('x4g-theme', isDark ? 'dark' : 'light');
+  applyTheme(isDark);
+}
+applyTheme(isDark);
+
+// ── پر کردن رمز ──
+function fillPassword(pw) {
+  const input = document.getElementById('pw');
+  input.value = pw;
+  input.focus();
+  const wrap = input.closest('.inp-wrap');
+  wrap.style.borderColor = 'var(--accent)';
+  setTimeout(() => { wrap.style.borderColor = ''; }, 800);
+}
+
+// ── نمایش/مخفی کردن رمز ──
+function togglePassword() {
+  const input = document.getElementById('pw');
+  const icon = document.getElementById('pw-eye');
+  const toText = input.type === 'password';
+  input.type = toText ? 'text' : 'password';
+  icon.className = 'ti ' + (toText ? 'ti-eye-off' : 'ti-eye');
+  input.focus();
+}
+
+// ── فوکوس ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pw').focus();
+});
+
+// ── ارسال فرم ──
+document.getElementById('form').addEventListener('submit', async e => {
   e.preventDefault();
-  const btn=document.getElementById('btn'),err=document.getElementById('err'),et=document.getElementById('err-text');
-  err.classList.remove('show');btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> در حال ورود...';
-  try{
-    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('pw').value})});
-    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.detail||'خطا');}
-    location.href='/dashboard';
-  }catch(e){
-    et.textContent=e.message;err.classList.add('show');
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-login-2"></i> ورود به داشبورد';
+  const btn = document.getElementById('btn');
+  const err = document.getElementById('err');
+  const et = document.getElementById('err-text');
+  const pw = document.getElementById('pw');
+
+  err.classList.remove('show');
+  btn.disabled = true;
+
+  btn.innerHTML = `
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <span id="btn-text">در حال ورود...</span>
+  `;
+
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw.value })
+    });
+
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}));
+      throw new Error(d.detail || 'رمز عبور اشتباه است');
+    }
+
+    btn.innerHTML = '<i class="ti ti-circle-check"></i> <span id="btn-text">ورود موفق ✓</span>';
+    btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
+    btn.style.boxShadow = '0 6px 30px rgba(16,185,129,0.4)';
+
+    setTimeout(() => { location.href = '/dashboard'; }, 600);
+
+  } catch (e) {
+    et.textContent = e.message;
+    err.classList.add('show');
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-login-2"></i> <span id="btn-text">ورود به داشبورد</span>';
+    btn.style.background = '';
+    btn.style.boxShadow = '';
+
+    const wrap = pw.closest('.inp-wrap');
+    wrap.style.borderColor = 'rgba(239,68,68,0.4)';
+    setTimeout(() => { wrap.style.borderColor = ''; }, 800);
+    pw.focus();
+    pw.select();
   }
 });
+
+document.getElementById('pw').addEventListener('input', () => {
+  document.getElementById('err').classList.remove('show');
+});
+
+document.getElementById('pw').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    document.getElementById('form').dispatchEvent(new Event('submit'));
+  }
+});
+
+console.log('⚡ X4G v9.5 — پنل مدیریت پیشرفته');
+console.log('🔐 رمز پیش‌فرض: X4GKING');
 </script>
 </body></html>"""
-
 
 DASHBOARD_HTML = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
