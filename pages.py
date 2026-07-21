@@ -2624,190 +2624,464 @@ DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 # تابع صفحه پابلیک ساب - اصلاح‌شده و بدون باگ
 # =======================================================
 def get_public_page_html(uuid_key: str) -> str:
-    """صفحه پابلیک ساب v3 — طراحی حرفه‌ای‌تر"""
+    """صفحه پابلیک ساب — طراحی شیشه‌ای مدرن و پیشرفته (نسخه‌ی v4)"""
     
     html = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>X4G Sub</title>
+<title>X4G Sub · اشتراک حرفه‌ای</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
+/* ========================================
+   طراحی شیشه‌ای مدرن — X4G v9.5
+   ======================================== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
 :root{
-  --bg:#060a14;--bg2:#0a1020;--bg3:#0d1428;
-  --card:#0c1326;--card-b:rgba(96,148,246,0.12);--card-bh:rgba(96,148,246,0.28);
-  --accent:#3B7CF6;--accent2:#6EA3FF;--accent-d:rgba(59,124,246,0.1);
-  --green:#1FB87E;--green-bg:rgba(31,184,126,0.1);--green-t:#3FD79C;
-  --red:#EF4444;--red-bg:rgba(239,68,68,0.1);--red-t:#FB8585;
-  --amber:#F2A33D;--amber-bg:rgba(242,163,61,0.1);--amber-t:#F9C988;
-  --purple:#9D7BF0;--purple-bg:rgba(157,123,240,0.1);--purple-t:#BCA4F7;
-  --t1:#EFF4FF;--t2:#8AA0C4;--t3:#48577A;
-  --radius:18px;--shadow:0 12px 40px rgba(0,0,0,0.45);
-  --serif:'Vazirmatn',sans-serif;
-}}
+  /* ── دارک ── */
+  --bg-dark:#080c18;
+  --glass-dark:rgba(255,255,255,0.04);
+  --glass-border-dark:rgba(255,255,255,0.06);
+  --glass-shadow-dark:0 16px 56px rgba(0,0,0,0.55);
+  --text-dark:#edf2ff;
+  --text-dim-dark:rgba(255,255,255,0.32);
+  --text-mid-dark:rgba(255,255,255,0.6);
+  --accent-dark:#5b8def;
+  --accent2-dark:#7aa3ff;
+  --green-dark:#1FB87E;
+  --green-t-dark:#3FD79C;
+  --red-dark:#EF4444;
+  --red-t-dark:#FB8585;
+  --amber-dark:#F2A33D;
+  --amber-t-dark:#F9C988;
+  --purple-dark:#9D7BF0;
+  --purple-t-dark:#BCA4F7;
+
+  /* ── روشن ── */
+  --bg-light:#eef2f8;
+  --glass-light:rgba(255,255,255,0.55);
+  --glass-border-light:rgba(255,255,255,0.65);
+  --glass-shadow-light:0 16px 56px rgba(0,0,0,0.06);
+  --text-light:#111827;
+  --text-dim-light:rgba(0,0,0,0.28);
+  --text-mid-light:rgba(0,0,0,0.5);
+  --accent-light:#3b6fd4;
+  --accent2-light:#5a88e8;
+  --green-light:#0E9A6A;
+  --green-t-light:#0A7553;
+  --red-light:#DC2626;
+  --red-t-light:#A51E1E;
+  --amber-light:#C97A12;
+  --amber-t-light:#8F5A0C;
+  --purple-light:#7350D6;
+  --purple-t-light:#5A3CAD;
+
+  /* ── متغیرهای جاری ── */
+  --bg:var(--bg-dark);
+  --glass:var(--glass-dark);
+  --glass-border:var(--glass-border-dark);
+  --glass-shadow:var(--glass-shadow-dark);
+  --text:var(--text-dark);
+  --text-dim:var(--text-dim-dark);
+  --text-mid:var(--text-mid-dark);
+  --accent:var(--accent-dark);
+  --accent2:var(--accent2-dark);
+  --green:var(--green-dark);
+  --green-t:var(--green-t-dark);
+  --red:var(--red-dark);
+  --red-t:var(--red-t-dark);
+  --amber:var(--amber-dark);
+  --amber-t:var(--amber-t-dark);
+  --purple:var(--purple-dark);
+  --purple-t:var(--purple-t-dark);
+  --transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
 [data-theme="light"]{
-  --bg:#F0F3FA;--bg2:#E5ECF8;--bg3:#D9E3F4;
-  --card:#FFFFFF;--card-b:rgba(59,124,246,0.14);--card-bh:rgba(59,124,246,0.32);
-  --accent:#2E63D6;--accent2:#1E4CB8;--accent-d:rgba(46,99,214,0.08);
-  --green:#0E9A6A;--green-bg:rgba(14,154,106,0.08);--green-t:#0A7553;
-  --red:#DC2626;--red-bg:rgba(220,38,38,0.08);--red-t:#A51E1E;
-  --amber:#C97A12;--amber-bg:rgba(201,122,18,0.08);--amber-t:#8F5A0C;
-  --purple:#7350D6;--purple-bg:rgba(115,80,214,0.08);--purple-t:#5A3CAD;
-  --t1:#101A30;--t2:#48577A;--t3:#8694B0;
-  --shadow:0 12px 36px rgba(20,40,90,0.12);
-}}
-html,body{min-height:100%;background:var(--bg);font-family:var(--serif);color:var(--t1);font-size:14px;transition:background .35s,color .35s}
-.bg-fx{position:fixed;inset:0;background:radial-gradient(ellipse 70% 45% at 50% -8%,rgba(59,124,246,0.13),transparent 62%),var(--bg);z-index:0;pointer-events:none;transition:background .35s}
-.grid-fx{position:fixed;inset:0;background-image:linear-gradient(rgba(96,148,246,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(96,148,246,0.025) 1px,transparent 1px);background-size:46px 46px;z-index:0;pointer-events:none}
-.wrap{position:relative;z-index:10;max-width:800px;margin:0 auto;padding:24px 16px 64px}
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;gap:10px}
-.brand{display:flex;align-items:center;gap:11px;min-width:0}
-.brand-img{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1px solid var(--card-b);box-shadow:0 0 14px rgba(139,92,246,.3),0 0 8px rgba(59,130,246,.25);flex-shrink:0}
+  --bg:var(--bg-light);
+  --glass:var(--glass-light);
+  --glass-border:var(--glass-border-light);
+  --glass-shadow:var(--glass-shadow-light);
+  --text:var(--text-light);
+  --text-dim:var(--text-dim-light);
+  --text-mid:var(--text-mid-light);
+  --accent:var(--accent-light);
+  --accent2:var(--accent2-light);
+  --green:var(--green-light);
+  --green-t:var(--green-t-light);
+  --red:var(--red-light);
+  --red-t:var(--red-t-light);
+  --amber:var(--amber-light);
+  --amber-t:var(--amber-t-light);
+  --purple:var(--purple-light);
+  --purple-t:var(--purple-t-light);
+}
+
+html,body{min-height:100%;background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);font-size:14px;transition:var(--transition)}
+
+/* ── پس‌زمینه ── */
+.bg-fx{
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(91,141,239,0.08), transparent 65%),
+    var(--bg);
+  z-index:0;pointer-events:none;transition:var(--transition)
+}
+.grid-fx{
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size:52px 52px;
+  z-index:0;pointer-events:none
+}
+.orb{
+  position:fixed;border-radius:50%;filter:blur(120px);z-index:0;animation:float 18s ease-in-out infinite;opacity:0.3;pointer-events:none
+}
+.orb1{width:500px;height:500px;background:rgba(91,141,239,0.05);top:-120px;right:-100px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:rgba(139,92,246,0.04);bottom:-80px;left:-80px;animation-delay:6s}
+.orb3{width:250px;height:250px;background:rgba(16,185,129,0.03);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:12s;filter:blur(140px)}
+@keyframes float{
+  0%,100%{transform:translateY(0) scale(1)}
+  33%{transform:translateY(-40px) scale(1.06)}
+  66%{transform:translateY(30px) scale(0.94)}
+}
+
+.wrap{position:relative;z-index:10;max-width:820px;margin:0 auto;padding:28px 18px 70px;animation:fadeUp 0.9s cubic-bezier(0.16,1,0.3,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ── هدر ── */
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:12px}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.brand-img{
+  width:44px;height:44px;border-radius:50%;overflow:hidden;
+  border:2px solid var(--glass-border);
+  box-shadow:0 0 40px rgba(91,141,239,0.12);
+  flex-shrink:0;transition:var(--transition)
+}
 .brand-img img{width:100%;height:100%;object-fit:cover}
-.brand-name{font-size:14.5px;font-weight:800;color:var(--t1);letter-spacing:-.01em}
-.brand-sub{font-size:9.5px;color:var(--t3);font-weight:500}
+.brand-name{
+  font-size:15.5px;font-weight:800;color:var(--text);
+  background:linear-gradient(135deg,var(--text),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+.brand-sub{font-size:10px;color:var(--text-dim);font-weight:500}
 .top-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.icon-btn{width:36px;height:36px;border-radius:11px;background:var(--card);border:1px solid var(--card-b);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:.18s}
-.icon-btn:hover{background:var(--accent-d);color:var(--accent2);border-color:var(--card-bh)}
+.icon-btn{
+  width:38px;height:38px;border-radius:12px;
+  background:var(--glass);backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  color:var(--text-mid);
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;cursor:pointer;transition:var(--transition)
+}
+.icon-btn:hover{background:rgba(91,141,239,0.06);color:var(--accent2);border-color:rgba(91,141,239,0.2);transform:translateY(-1px)}
 
-.sub-info{background:var(--card);border:1px solid var(--card-b);border-radius:22px;padding:24px 24px 22px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.sub-info::before{content:'';position:absolute;top:0;right:0;width:160px;height:160px;background:radial-gradient(circle at top right,rgba(59,124,246,.1),transparent 70%);pointer-events:none}
-.sub-eyebrow{font-size:10px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.sub-eyebrow i{font-size:13px}
-.sub-name{font-size:23px;font-weight:800;color:var(--t1);margin-bottom:6px;letter-spacing:-.02em}
-.sub-desc{font-size:12.5px;color:var(--t2);line-height:1.8;margin-bottom:14px}
-.sub-meta-row{font-size:10.5px;color:var(--t3);margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.sub-sub-box{background:var(--accent-d);border:1px solid var(--card-b);border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.sub-sub-url{font-family:ui-monospace,monospace;font-size:10px;color:var(--accent2);word-break:break-all;flex:1;min-width:140px}
+/* ── کارت اطلاعات گروه ── */
+.sub-info{
+  background:var(--glass);backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:26px;padding:28px 28px 24px;
+  margin-bottom:18px;box-shadow:var(--glass-shadow);
+  position:relative;overflow:hidden;transition:var(--transition)
+}
+.sub-info::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:240px;height:240px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  opacity:0.04;pointer-events:none;animation:pulseGlow 10s ease-in-out infinite
+}
+@keyframes pulseGlow{0%,100%{transform:scale(1);opacity:0.03}50%{transform:scale(1.15);opacity:0.07}}
+.sub-eyebrow{
+  font-size:10px;font-weight:700;color:var(--accent2);
+  text-transform:uppercase;letter-spacing:0.12em;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px
+}
+.sub-name{font-size:25px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-0.02em}
+.sub-desc{font-size:13px;color:var(--text-mid);line-height:1.8;margin-bottom:14px}
+.sub-meta-row{font-size:10.5px;color:var(--text-dim);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.sub-sub-box{
+  background:rgba(91,141,239,0.04);border:1px solid var(--glass-border);
+  border-radius:14px;padding:12px 16px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap
+}
+.sub-sub-url{
+  font-family:ui-monospace,monospace;font-size:10px;
+  color:var(--accent2);word-break:break-all;flex:1;min-width:140px
+}
 
-.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.stat-card{background:var(--card);border:1px solid var(--card-b);border-radius:16px;padding:16px 17px;transition:.2s}
-.stat-card:hover{border-color:var(--card-bh);transform:translateY(-1px)}
-.stat-label{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
-.stat-val{font-size:22px;font-weight:800;color:var(--t1);line-height:1;letter-spacing:-.01em}
-.stat-sub{font-size:9.5px;color:var(--t3);margin-top:6px}
+/* ── آمار ── */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px
+}
+.stat-card{
+  background:var(--glass);backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);border-radius:18px;
+  padding:18px 20px;transition:var(--transition)
+}
+.stat-card:hover{border-color:rgba(91,141,239,0.15);transform:translateY(-2px);box-shadow:var(--glass-shadow)}
+.stat-label{font-size:9px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:7px}
+.stat-val{font-size:24px;font-weight:800;color:var(--text);line-height:1;letter-spacing:-0.02em}
+.stat-sub{font-size:9.5px;color:var(--text-mid);margin-top:6px}
 
-.copy-all-bar{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,var(--accent) 0%,#2952C8 100%);border-radius:18px;padding:16px 19px;margin-bottom:18px;box-shadow:0 10px 30px rgba(59,124,246,.28);flex-wrap:wrap}
+/* ── نوار کپی همه ── */
+.copy-all-bar{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(120deg,var(--accent),#7a5cf0);
+  border-radius:20px;padding:18px 22px;margin-bottom:20px;
+  box-shadow:0 10px 36px rgba(91,141,239,0.2);
+  flex-wrap:wrap;transition:var(--transition)
+}
 .copy-all-text{flex:1;min-width:160px}
-.copy-all-title{font-size:13.5px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
-.copy-all-sub{font-size:10px;color:rgba(255,255,255,.78);margin-top:3px}
-.copy-all-btn{background:#fff;color:#1D4ED8;border:none;border-radius:12px;padding:10px 19px;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.18s;white-space:nowrap}
-.copy-all-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.22)}
-.copy-all-btn:active{transform:translateY(0) scale(.98)}
+.copy-all-title{font-size:14px;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+.copy-all-sub{font-size:10px;color:rgba(255,255,255,0.7);margin-top:3px}
+.copy-all-btn{
+  background:#fff;color:#1D4ED8;border:none;border-radius:14px;
+  padding:11px 22px;font-family:inherit;font-size:12.5px;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;gap:7px;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);white-space:nowrap
+}
+.copy-all-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+.copy-all-btn:active{transform:translateY(0) scale(0.98)}
 
-.cfg-title{font-size:12px;font-weight:800;color:var(--t2);margin-bottom:13px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.07em}
-.cfg-title i{color:var(--accent);font-size:15px}
-.cfg-grid{display:grid;gap:13px}
+/* ── کانفیگ‌ها ── */
+.cfg-title{
+  font-size:12px;font-weight:800;color:var(--text-mid);
+  margin-bottom:14px;display:flex;align-items:center;gap:7px;
+  text-transform:uppercase;letter-spacing:0.07em
+}
+.cfg-title i{color:var(--accent);font-size:16px}
+.cfg-grid{display:grid;gap:14px}
 
-/* ── کارت کانفیگ به‌شکل بلیط دسترسی ── */
-.cfg-card{background:var(--card);border:1px solid var(--card-b);border-radius:18px;transition:all .2s;position:relative;overflow:hidden}
-.cfg-card:hover{border-color:var(--card-bh);box-shadow:var(--shadow)}
-.cfg-top{padding:17px 19px 15px;position:relative}
-.cfg-top::after{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:var(--green)}
+.cfg-card{
+  background:var(--glass);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);border-radius:22px;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+  position:relative;overflow:hidden
+}
+.cfg-card:hover{border-color:rgba(91,141,239,0.15);box-shadow:var(--glass-shadow);transform:translateY(-3px)}
+.cfg-card.inactive{opacity:0.55}
+.cfg-top{padding:18px 22px 16px;position:relative}
+.cfg-top::after{
+  content:'';position:absolute;top:0;right:0;width:4px;height:100%;
+  background:var(--green);border-radius:0 4px 4px 0
+}
 .cfg-card.inactive .cfg-top::after{background:var(--red)}
-.cfg-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.cfg-label{font-size:14.5px;font-weight:700;color:var(--t1)}
-.cfg-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.proto-chip{font-size:9px;padding:3px 8px;border-radius:7px;font-weight:800;letter-spacing:.02em}
-.pc-ws{background:var(--accent-d);color:var(--accent2)}
-.pc-xhttp{background:var(--purple-bg);color:var(--purple-t)}
-.pc-ultra{background:var(--green-bg);color:var(--green-t)}
-.cfg-status{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
-.cfg-status.ok{background:var(--green-bg);color:var(--green-t)}
-.cfg-status.no{background:var(--red-bg);color:var(--red-t)}
+.cfg-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:8px;margin-bottom:12px;flex-wrap:wrap
+}
+.cfg-label{font-size:15px;font-weight:700;color:var(--text)}
+.cfg-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.proto-chip{
+  font-size:9px;padding:3px 10px;border-radius:8px;
+  font-weight:800;letter-spacing:0.02em
+}
+.pc-ws{background:rgba(91,141,239,0.08);color:var(--accent2)}
+.pc-xhttp{background:rgba(157,123,240,0.08);color:var(--purple-t)}
+.pc-ultra{background:rgba(31,184,126,0.08);color:var(--green-t)}
+.cfg-status{
+  display:flex;align-items:center;gap:5px;font-size:10px;
+  font-weight:700;padding:4px 12px;border-radius:20px;white-space:nowrap
+}
+.cfg-status.ok{background:rgba(31,184,126,0.08);color:var(--green-t)}
+.cfg-status.no{background:rgba(239,68,68,0.08);color:var(--red-t)}
 .cfg-usage{margin-bottom:4px}
-.ubar{height:6px;border-radius:4px;background:rgba(96,148,246,0.1);overflow:hidden;margin-bottom:5px}
-.ubar-f{height:100%;border-radius:4px;transition:width .5s ease}
-.utxt{font-size:10px;color:var(--t3);display:flex;justify-content:space-between}
+.ubar{
+  height:5px;border-radius:4px;
+  background:rgba(91,141,239,0.06);overflow:hidden;margin-bottom:5px
+}
+.ubar-f{height:100%;border-radius:4px;transition:width 0.6s ease}
+.utxt{font-size:10px;color:var(--text-mid);display:flex;justify-content:space-between}
 
-/* خط جداکننده‌ی بلیطی با دندانه‌های گرد */
-.cfg-tear{position:relative;height:0;border-top:1.5px dashed var(--card-b);margin:0 19px}
-.cfg-tear::before,.cfg-tear::after{content:'';position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--bg);transform:translateY(-50%);border:1px solid var(--card-b)}
-.cfg-tear::before{right:-28px}
-.cfg-tear::after{left:-28px}
+/* ── خط جداکننده‌ی بلیط ── */
+.cfg-tear{
+  position:relative;height:0;border-top:1.5px dashed var(--glass-border);margin:0 22px
+}
+.cfg-tear::before,.cfg-tear::after{
+  content:'';position:absolute;top:50%;width:20px;height:20px;
+  border-radius:50%;background:var(--bg);
+  transform:translateY(-50%);border:1px solid var(--glass-border)
+}
+.cfg-tear::before{right:-30px}
+.cfg-tear::after{left:-30px}
 
-.cfg-bottom{padding:15px 19px 18px}
-.cfg-link-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:transparent;border:1px dashed var(--card-b);border-radius:11px;padding:10px 13px;cursor:pointer;font-family:inherit;color:var(--t2);font-size:11.5px;font-weight:600;transition:.15s}
-.cfg-link-toggle:hover{background:var(--accent-d);border-color:var(--card-bh);color:var(--accent2)}
+.cfg-bottom{padding:16px 22px 20px}
+.cfg-link-toggle{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;background:rgba(91,141,239,0.02);border:1px dashed var(--glass-border);
+  border-radius:12px;padding:11px 15px;cursor:pointer;
+  font-family:inherit;color:var(--text-mid);font-size:11.5px;font-weight:600;
+  transition:var(--transition)
+}
+.cfg-link-toggle:hover{background:rgba(91,141,239,0.04);border-color:rgba(91,141,239,0.2);color:var(--accent2)}
 .cfg-link-toggle .ltl{display:flex;align-items:center;gap:7px}
-.cfg-link-toggle i.ti-chevron-down{transition:transform .2s}
+.cfg-link-toggle i.ti-chevron-down{transition:transform 0.25s ease}
 .cfg-link-toggle.open i.ti-chevron-down{transform:rotate(180deg)}
-.cfg-vless-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
+.cfg-vless-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.3s ease}
 .cfg-vless-wrap.open{grid-template-rows:1fr}
 .cfg-vless-inner{overflow:hidden}
-.cfg-vless{background:rgba(0,0,0,.22);border:1px solid var(--card-b);border-radius:10px;padding:11px 13px;font-size:9.8px;font-family:ui-monospace,monospace;color:var(--accent2);word-break:break-all;line-height:1.7;margin-top:9px;max-height:90px;overflow-y:auto}
-[data-theme="light"] .cfg-vless{background:rgba(46,99,214,.05)}
-.cfg-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
-.btn{font-family:inherit;font-size:11.5px;font-weight:700;border-radius:10px;padding:8px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:none;transition:all .15s;white-space:nowrap}
+.cfg-vless{
+  background:rgba(0,0,0,0.15);border:1px solid var(--glass-border);
+  border-radius:11px;padding:12px 14px;
+  font-size:9.8px;font-family:ui-monospace,monospace;
+  color:var(--accent2);word-break:break-all;line-height:1.8;
+  margin-top:10px;max-height:100px;overflow-y:auto
+}
+[data-theme="light"] .cfg-vless{background:rgba(46,99,214,0.03)}
+.cfg-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* ── دکمه‌ها ── */
+.btn{
+  font-family:inherit;font-size:11.5px;font-weight:700;
+  border-radius:12px;padding:8px 16px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;
+  border:none;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);white-space:nowrap
+}
 .btn i{font-size:13px}
-.btn-p{background:linear-gradient(135deg,#2F8FFF,#8B5CF6);color:#fff;box-shadow:0 3px 14px rgba(139,92,246,.35)}
-.btn-p:hover{background:var(--accent2)}
-.btn-g{background:var(--accent-d);color:var(--accent2);border:1px solid rgba(96,148,246,.16)}
-.btn-g:hover{background:rgba(96,148,246,.2)}
-.btn-pur{background:var(--purple-bg);color:var(--purple-t);border:1px solid rgba(157,123,240,.2)}
-.btn-pur:hover{background:rgba(157,123,240,.22)}
-.conn-chip{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;padding:3px 8px;border-radius:20px;background:var(--green-bg);color:var(--green-t);font-weight:700}
-.dot{width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
-@keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.25}}}}
+.btn-p{
+  background:linear-gradient(135deg,var(--accent),#7a5cf0);
+  color:#fff;box-shadow:0 4px 20px rgba(91,141,239,0.2)
+}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,141,239,0.3)}
+.btn-g{
+  background:rgba(91,141,239,0.04);color:var(--accent2);
+  border:1px solid rgba(91,141,239,0.06)
+}
+.btn-g:hover{background:rgba(91,141,239,0.08);border-color:rgba(91,141,239,0.15)}
+.btn-pur{
+  background:rgba(157,123,240,0.04);color:var(--purple-t);
+  border:1px solid rgba(157,123,240,0.08)
+}
+.btn-pur:hover{background:rgba(157,123,240,0.08);border-color:rgba(157,123,240,0.18)}
+.conn-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:9.5px;padding:3px 10px;border-radius:20px;
+  background:rgba(31,184,126,0.06);color:var(--green-t);font-weight:700
+}
+.dot{
+  width:5px;height:5px;border-radius:50%;background:var(--green);
+  display:inline-block;animation:pulse 2s infinite
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
 
-/* ── صفحه‌ی قفل / رمز ── */
+/* ── صفحه‌ی قفل ── */
 .lock-stage{display:flex;align-items:center;justify-content:center;min-height:78vh;padding:20px 0}
-.lock-card{background:var(--card);border:1px solid var(--card-b);border-radius:26px;padding:0;text-align:center;max-width:380px;width:100%;box-shadow:var(--shadow);overflow:hidden;position:relative}
-.lock-banner{background:linear-gradient(150deg,rgba(59,124,246,.16),rgba(59,124,246,.02) 70%);padding:38px 30px 26px;position:relative}
-.lock-shield{width:64px;height:64px;border-radius:18px;background:var(--accent-d);border:1px solid var(--card-bh);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;position:relative}
-.lock-shield::after{content:'';position:absolute;inset:-7px;border-radius:22px;border:1px solid var(--card-b);animation:breathe 2.6s ease-in-out infinite}
-@keyframes breathe{{0%,100%{{transform:scale(1);opacity:.5}}50%{{transform:scale(1.08);opacity:0}}}}
-.lock-shield i{font-size:28px;color:var(--accent2)}
-.lock-title{font-size:18px;font-weight:800;margin-bottom:6px;color:var(--t1);letter-spacing:-.01em}
-.lock-sub{font-size:12px;color:var(--t3);line-height:1.7}
-.lock-form{padding:24px 30px 30px}
-.lock-field{position:relative;margin-bottom:13px}
-.lock-inp{width:100%;padding:13px 44px 13px 44px;border-radius:13px;border:1px solid var(--card-b);background:rgba(0,0,0,.2);color:var(--t1);font-family:inherit;font-size:14px;outline:none;text-align:center;letter-spacing:.14em;transition:.18s}
-[data-theme="light"] .lock-inp{background:rgba(46,99,214,.04)}
-.lock-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-d)}
-.lock-eye{position:absolute;left:13px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:4px;display:flex}
+.lock-card{
+  background:var(--glass);backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);border-radius:28px;
+  padding:0;text-align:center;max-width:400px;width:100%;
+  box-shadow:var(--glass-shadow);overflow:hidden;position:relative
+}
+.lock-banner{
+  background:linear-gradient(150deg,rgba(91,141,239,0.06),rgba(91,141,239,0.01) 70%);
+  padding:42px 32px 28px;position:relative
+}
+.lock-shield{
+  width:68px;height:68px;border-radius:20px;
+  background:var(--glass);border:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;position:relative;box-shadow:var(--glass-shadow)
+}
+.lock-shield::after{
+  content:'';position:absolute;inset:-8px;border-radius:24px;
+  border:1px solid var(--glass-border);
+  animation:breathe 2.8s ease-in-out infinite
+}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.1);opacity:0}}
+.lock-shield i{font-size:30px;color:var(--accent2)}
+.lock-title{font-size:19px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-0.01em}
+.lock-sub{font-size:12px;color:var(--text-mid);line-height:1.7}
+.lock-form{padding:26px 32px 32px}
+.lock-field{position:relative;margin-bottom:14px}
+.lock-inp{
+  width:100%;padding:14px 46px 14px 46px;border-radius:14px;
+  border:1.5px solid var(--glass-border);
+  background:rgba(255,255,255,0.02);
+  color:var(--text);font-family:inherit;font-size:14px;outline:none;
+  text-align:center;letter-spacing:0.14em;transition:var(--transition)
+}
+.lock-inp:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,141,239,0.04)}
+.lock-eye{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--text-dim);
+  cursor:pointer;font-size:16px;padding:4px;display:flex
+}
 .lock-eye:hover{color:var(--accent2)}
-.lock-lockicon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:15px;pointer-events:none}
+.lock-lockicon{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  color:var(--text-dim);font-size:15px;pointer-events:none
+}
 .lock-err{color:var(--red-t);font-size:11.5px;margin-bottom:10px;min-height:16px;display:flex;align-items:center;justify-content:center;gap:5px}
-.lock-btn{width:100%;justify-content:center;padding:13px;font-size:13px;border-radius:13px}
-.lock-footer{padding:14px 30px;border-top:1px solid var(--card-b);font-size:10px;color:var(--t3);display:flex;align-items:center;justify-content:center;gap:6px}
+.lock-btn{width:100%;justify-content:center;padding:14px;font-size:13px;border-radius:14px}
+.lock-footer{
+  padding:14px 32px;border-top:1px solid var(--glass-border);
+  font-size:10px;color:var(--text-dim);display:flex;align-items:center;justify-content:center;gap:6px
+}
 
-.empty-state{text-align:center;padding:80px 20px;color:var(--t3)}
-.empty-state i{font-size:38px;display:block;margin-bottom:14px}
+.empty-state{text-align:center;padding:80px 20px;color:var(--text-mid)}
+.empty-state i{font-size:40px;display:block;margin-bottom:14px;opacity:0.3}
 
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--card);border:1px solid var(--card-b);color:var(--t1);border-radius:12px;padding:10px 20px;font-size:12.5px;font-weight:600;opacity:0;transition:all .25s;z-index:999;pointer-events:none;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow);white-space:nowrap}
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);
+  background:var(--glass);backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);color:var(--text);
+  border-radius:14px;padding:11px 22px;font-size:12.5px;font-weight:600;
+  opacity:0;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  z-index:999;pointer-events:none;display:flex;align-items:center;gap:8px;
+  box-shadow:var(--glass-shadow);white-space:nowrap
+}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:rgba(31,184,126,.35);background:var(--green-bg);color:var(--green-t)}
+.toast.ok{border-color:rgba(31,184,126,0.2);background:rgba(31,184,126,0.04);color:var(--green-t)}
 
-.qr-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:20px}
+.qr-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.6);z-index:600;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);padding:20px
+}
 .qr-modal.open{display:flex}
-.qr-box{background:var(--card);border:1px solid var(--card-b);border-radius:22px;padding:26px;text-align:center;max-width:340px;width:100%;box-shadow:var(--shadow)}
-.qr-title{font-size:13.5px;font-weight:800;margin-bottom:16px;color:var(--t1)}
-.qr-img{border-radius:14px;overflow:hidden;margin-bottom:15px}
-.qr-img img{width:100%;display:block;background:#fff;padding:10px;border-radius:14px}
+.qr-box{
+  background:var(--glass);backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);border-radius:26px;
+  padding:28px;text-align:center;max-width:360px;width:100%;
+  box-shadow:var(--glass-shadow);animation:fadeUp 0.4s ease
+}
+.qr-title{font-size:14px;font-weight:800;margin-bottom:16px;color:var(--text)}
+.qr-img{border-radius:16px;overflow:hidden;margin-bottom:16px}
+.qr-img img{width:100%;display:block;background:#fff;padding:12px;border-radius:16px}
 
-.footer{text-align:center;padding-top:28px;font-size:10.5px;color:var(--t3)}
-.footer a{color:var(--accent2);font-weight:700}
+.footer{text-align:center;padding-top:30px;font-size:10.5px;color:var(--text-dim)}
+.footer a{color:var(--accent2);font-weight:700;transition:var(--transition)}
+.footer a:hover{color:var(--accent)}
 
-@media(max-width:520px){{
+@media(max-width:520px){
   .stats-bar{grid-template-columns:1fr 1fr}
-  .stats-bar .stat-card:nth-child(3){{grid-column:1/-1}}
-  .sub-name{font-size:19px}
+  .stats-bar .stat-card:nth-child(3){grid-column:1/-1}
+  .sub-name{font-size:20px}
   .copy-all-bar{flex-direction:column;align-items:stretch}
   .copy-all-btn{justify-content:center}
   .wrap{padding:16px 12px 50px}
   .lock-banner{padding:32px 22px 22px}
   .lock-form{padding:20px 22px 26px}
-}}
-@keyframes spin{{to{{transform:rotate(360deg)}}}}
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<div class="bg-fx"></div><div class="grid-fx"></div>
+<div class="bg-fx"></div>
+<div class="grid-fx"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
 <div class="toast" id="toast"></div>
+
 <div class="qr-modal" id="qr-modal" onclick="this.classList.remove('open')">
   <div class="qr-box" onclick="event.stopPropagation()">
     <div class="qr-title" id="qr-label">QR Code</div>
@@ -2815,79 +3089,106 @@ html,body{min-height:100%;background:var(--bg);font-family:var(--serif);color:va
     <button class="btn btn-g" style="width:100%;justify-content:center" onclick="document.getElementById('qr-modal').classList.remove('open')"><i class="ti ti-x"></i> بستن</button>
   </div>
 </div>
+
 <div class="wrap">
   <div class="top">
     <div class="brand">
       <div class="brand-img"><img src="data:image/png;base64,__LOGO_B64__" alt="X4G"></div>
-      <div><div class="brand-name">X4G</div><div class="brand-sub">v9.5</div></div>
+      <div>
+        <div class="brand-name">X4G</div>
+        <div class="brand-sub">پنل مدیریت پیشرفته</div>
+      </div>
     </div>
     <div class="top-actions">
       <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="تغییر تم"><i class="ti ti-sun" id="theme-icon"></i></button>
-      
     </div>
   </div>
+
   <div id="root">
     <div class="empty-state"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>در حال بارگذاری...</div>
   </div>
+
   <div class="footer">پشتیبانی: <a href="https://t.me/Farajian2004f" target="_blank">@Farajian2004f</a> · X4G v9.5</div>
 </div>
+
 <script>
 const UUID_KEY='__UUID_KEY__';
 let savedPw='';
 
-let isDark=localStorage.getItem('x4g-pub-theme')!=='light';
-function applyTheme(dark){{
-  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
-  document.getElementById('theme-icon').className='ti '+(dark?'ti-sun':'ti-moon');
-}}
-function toggleTheme(){{isDark=!isDark;localStorage.setItem('x4g-pub-theme',isDark?'dark':'light');applyTheme(isDark)}}
+// ── تم ──
+let isDark = localStorage.getItem('x4g-pub-theme') !== 'light';
+function applyTheme(dark){
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.getElementById('theme-icon').className = 'ti ' + (dark ? 'ti-sun' : 'ti-moon');
+}
+function toggleTheme(){
+  isDark = !isDark;
+  localStorage.setItem('x4g-pub-theme', isDark ? 'dark' : 'light');
+  applyTheme(isDark);
+}
 applyTheme(isDark);
 
-function toast(msg,type=''){{
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
-  setTimeout(()=>t.classList.remove('show'),2400);
-}}
-function esc(s){{return String(s||'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]))}}
-function fmtB(b){{if(!b||b===0)return '0 B';if(b<1024)return b+' B';if(b<1024**2)return (b/1024).toFixed(1)+' KB';if(b<1024**3)return (b/1024**2).toFixed(2)+' MB';return (b/1024**3).toFixed(2)+' GB'}}
-function toFa(n){{return String(n).replace(/\\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}}
-function protoChip(p){{
-  if(p==='xhttp-stream-one')return '<span class="proto-chip pc-ultra"><i class="ti ti-bolt"></i> XHTTP ULTRA</span>';
-  if(p&&p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';
+// ── ابزارها ──
+function toast(msg, type=''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+function esc(s){
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+function fmtB(b){
+  if(!b || b === 0) return '0 B';
+  if(b < 1024) return b + ' B';
+  if(b < 1024**2) return (b/1024).toFixed(1) + ' KB';
+  if(b < 1024**3) return (b/1024**2).toFixed(2) + ' MB';
+  return (b/1024**3).toFixed(2) + ' GB';
+}
+function toFa(n){
+  return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+function protoChip(p){
+  if(p === 'xhttp-stream-one') return '<span class="proto-chip pc-ultra"><i class="ti ti-bolt"></i> XHTTP ULTRA</span>';
+  if(p && p.startsWith('xhttp')) return '<span class="proto-chip pc-xhttp">' + esc(p) + '</span>';
   return '<span class="proto-chip pc-ws">VLESS · WS</span>';
-}}
+}
 
-function showQR(label,link){{
-  document.getElementById('qr-label').textContent=label;
-  document.getElementById('qr-img').src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&data='+encodeURIComponent(link);
+// ── QR ──
+function showQR(label, link){
+  document.getElementById('qr-label').textContent = label;
+  document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(link);
   document.getElementById('qr-modal').classList.add('open');
-}}
+}
 
-function toggleLink(i){{
-  const wrap=document.getElementById('vw-'+i);
-  const btn=document.getElementById('vt-'+i);
-  const open=wrap.classList.toggle('open');
-  btn.classList.toggle('open',open);
+// ── نمایش/مخفی لینک ──
+function toggleLink(i){
+  const wrap = document.getElementById('vw-' + i);
+  const btn = document.getElementById('vt-' + i);
+  const open = wrap.classList.toggle('open');
+  btn.classList.toggle('open', open);
   btn.querySelector('.ltl span').textContent = open ? 'پنهان کردن لینک' : 'نمایش لینک کانفیگ';
-}}
+}
 
-async function loadData(pw=''){{
-  const url='/api/public/sub/'+UUID_KEY+(pw?'?pw='+encodeURIComponent(pw):'');
-  const r=await fetch(url);
+// ── بارگذاری داده ──
+async function loadData(pw = ''){
+  const url = '/api/public/sub/' + UUID_KEY + (pw ? '?pw=' + encodeURIComponent(pw) : '');
+  const r = await fetch(url);
   return r.json();
-}}
+}
 
-function renderLock(name,errMsg=''){{
-  document.getElementById('root').innerHTML=`
+// ── صفحه‌ی قفل ──
+function renderLock(name, errMsg = ''){
+  document.getElementById('root').innerHTML = `
     <div class="lock-stage">
       <div class="lock-card">
         <div class="lock-banner">
           <div class="lock-shield"><i class="ti ti-shield-lock"></i></div>
-          <div class="lock-title">${{esc(name)}}</div>
+          <div class="lock-title">${esc(name)}</div>
           <div class="lock-sub">این گروه با رمز محافظت شده. برای دیدن کانفیگ‌ها رمز رو وارد کنید.</div>
         </div>
         <div class="lock-form">
-          <div class="lock-err" id="lock-err">${{errMsg ? '<i class="ti ti-alert-circle"></i> '+esc(errMsg) : ''}}</div>
+          <div class="lock-err" id="lock-err">${errMsg ? '<i class="ti ti-alert-circle"></i> ' + esc(errMsg) : ''}</div>
           <div class="lock-field">
             <i class="ti ti-lock lock-lockicon"></i>
             <input class="lock-inp" type="password" id="lock-pw" placeholder="••••••••" autofocus>
@@ -2899,52 +3200,56 @@ function renderLock(name,errMsg=''){{
       </div>
     </div>
   `;
-  const inp=document.getElementById('lock-pw');
-  inp.addEventListener('keydown',e=>{{if(e.key==='Enter')submitLock()}});
-}}
+  const inp = document.getElementById('lock-pw');
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') submitLock(); });
+}
 
-function togglePwVis(){{
-  const inp=document.getElementById('lock-pw');
-  const icon=document.getElementById('lock-eye-icon');
-  const toText = inp.type==='password';
+function togglePwVis(){
+  const inp = document.getElementById('lock-pw');
+  const icon = document.getElementById('lock-eye-icon');
+  const toText = inp.type === 'password';
   inp.type = toText ? 'text' : 'password';
-  icon.className = 'ti '+(toText ? 'ti-eye-off' : 'ti-eye');
-}}
+  icon.className = 'ti ' + (toText ? 'ti-eye-off' : 'ti-eye');
+}
 
-async function submitLock(){{
-  const pw=document.getElementById('lock-pw').value;
-  const data=await loadData(pw);
-  if(data.locked){{renderLock(data.name,'رمز اشتباه است');return}}
-  savedPw=pw;
+async function submitLock(){
+  const pw = document.getElementById('lock-pw').value;
+  const data = await loadData(pw);
+  if(data.locked){
+    renderLock(data.name, 'رمز اشتباه است');
+    return;
+  }
+  savedPw = pw;
   renderContent(data);
-}}
+}
 
-function renderContent(d){{
-  const activeCount=d.links.filter(l=>l.active).length;
+// ── رندر محتوا ──
+function renderContent(d){
+  const activeCount = d.links.filter(l => l.active).length;
   const baseSubUrl = d.sub_url || (window.location.protocol + '//' + window.location.host + '/sub-group/' + UUID_KEY);
   const subUrl = baseSubUrl + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '');
 
-  window._x4gSubUrl  = subUrl;
+  window._x4gSubUrl = subUrl;
   window._x4gSubName = d.name;
-  window._x4gLinks   = d.links.map(l => ({{
-    vless : l.vless_link,
-    sub   : l.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : ''),
-    label : l.label,
-  }}));
+  window._x4gLinks = d.links.map(l => ({
+    vless: l.vless_link,
+    sub: l.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : ''),
+    label: l.label,
+  }));
 
-  document.getElementById('root').innerHTML=`
+  document.getElementById('root').innerHTML = `
     <div class="sub-info">
       <div class="sub-eyebrow"><i class="ti ti-folders"></i> گروه دسترسی</div>
-      <div class="sub-name">${{esc(d.name)}}</div>
-      ${{d.desc ? `<div class="sub-desc">${{esc(d.desc)}}</div>` : ''}}
-      <div class="sub-meta-row"><i class="ti ti-clock"></i> آخرین بروزرسانی: ${{new Date().toLocaleTimeString('fa-IR')}}</div>
+      <div class="sub-name">${esc(d.name)}</div>
+      ${d.desc ? `<div class="sub-desc">${esc(d.desc)}</div>` : ''}
+      <div class="sub-meta-row"><i class="ti ti-clock"></i> آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}</div>
       <div class="sub-sub-box">
-        <span class="sub-sub-url">${{esc(subUrl)}}</span>
-        <button class="btn btn-pur" style="padding:7px 12px;font-size:10.5px"
+        <span class="sub-sub-url">${esc(subUrl)}</span>
+        <button class="btn btn-pur" style="padding:7px 13px;font-size:10.5px"
           onclick="navigator.clipboard.writeText(window._x4gSubUrl).then(()=>toast('لینک ساب کپی شد ✓','ok'))">
           <i class="ti ti-copy"></i> کپی لینک ساب
         </button>
-        <button class="btn btn-g" style="padding:7px 12px;font-size:10.5px"
+        <button class="btn btn-g" style="padding:7px 13px;font-size:10.5px"
           onclick="showQR(window._x4gSubName + ' — کل گروه', window._x4gSubUrl)">
           <i class="ti ti-qrcode"></i> QR کل
         </button>
@@ -2956,105 +3261,108 @@ function renderContent(d){{
         <div class="copy-all-title"><i class="ti ti-copy"></i> کپی همه‌ی کانفیگ‌ها</div>
         <div class="copy-all-sub">تمام لینک‌های فعال این گروه را یک‌جا کپی کن</div>
       </div>
-      <button class="copy-all-btn" onclick="copyAllConfigs()"><i class="ti ti-clipboard-copy"></i> کپی همه (${{toFa(activeCount)}})</button>
+      <button class="copy-all-btn" onclick="copyAllConfigs()"><i class="ti ti-clipboard-copy"></i> کپی همه (${toFa(activeCount)})</button>
     </div>
 
     <div class="stats-bar">
       <div class="stat-card">
         <div class="stat-label">کانفیگ‌های فعال</div>
-        <div class="stat-val">${{toFa(activeCount)}}</div>
-        <div class="stat-sub">از ${{toFa(d.links.length)}} کانفیگ</div>
+        <div class="stat-val">${toFa(activeCount)}</div>
+        <div class="stat-sub">از ${toFa(d.links.length)} کانفیگ</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">اتصالات زنده</div>
-        <div class="stat-val">${{toFa(d.active_connections)}}</div>
+        <div class="stat-val">${toFa(d.active_connections)}</div>
         <div class="stat-sub" style="color:var(--green-t);display:flex;align-items:center;gap:4px"><span class="dot"></span> آنلاین</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">کل مصرف</div>
-        <div class="stat-val" style="font-size:17px;margin-top:3px">${{esc(d.total_used_fmt)}}</div>
+        <div class="stat-val" style="font-size:17px;margin-top:3px">${esc(d.total_used_fmt)}</div>
         <div class="stat-sub">همه کانفیگ‌ها</div>
       </div>
     </div>
 
-    <div class="cfg-title"><i class="ti ti-link"></i> کانفیگ‌ها (${{toFa(d.links.length)}} عدد)</div>
+    <div class="cfg-title"><i class="ti ti-link"></i> کانفیگ‌ها (${toFa(d.links.length)} عدد)</div>
     <div class="cfg-grid">
-      ${{d.links.map((l, i) => {{
-        const pct = l.limit_bytes === 0 ? 0 : Math.min(100, l.used_bytes / l.limit_bytes * 100);
-        const bc  = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--amber)' : 'var(--green)';
+      ${d.links.map((l, i) => {
+        const pct = l.limit_bytes === 0 ? 0 : Math.min(100, (l.used_bytes / l.limit_bytes) * 100);
+        const bc = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--amber)' : 'var(--green)';
         const lim = l.limit_bytes === 0 ? '∞' : fmtB(l.limit_bytes);
         return `
-          <div class="cfg-card${{l.active ? '' : ' inactive'}}">
+          <div class="cfg-card${l.active ? '' : ' inactive'}">
             <div class="cfg-top">
               <div class="cfg-head">
                 <div>
-                  <div class="cfg-label">${{esc(l.label)}}</div>
+                  <div class="cfg-label">${esc(l.label)}</div>
                   <div class="cfg-badges">
-                    ${{protoChip(l.protocol)}}
-                    ${{l.connections > 0 ? `<span class="conn-chip"><span class="dot"></span> ${{toFa(l.connections)}} اتصال</span>` : ''}}
+                    ${protoChip(l.protocol)}
+                    ${l.connections > 0 ? `<span class="conn-chip"><span class="dot"></span> ${toFa(l.connections)} اتصال</span>` : ''}
                   </div>
                 </div>
-                <span class="cfg-status ${{l.active ? 'ok' : 'no'}}">${{l.active ? '<i class="ti ti-circle-check"></i> فعال' : '<i class="ti ti-circle-x"></i> غیرفعال'}}</span>
+                <span class="cfg-status ${l.active ? 'ok' : 'no'}">${l.active ? '<i class="ti ti-circle-check"></i> فعال' : '<i class="ti ti-circle-x"></i> غیرفعال'}</span>
               </div>
               <div class="cfg-usage">
-                <div class="ubar"><div class="ubar-f" style="width:${{pct}}%;background:${{bc}}"></div></div>
-                <div class="utxt"><span>${{esc(l.used_fmt)}} مصرف شده</span><span>سهمیه: ${{lim}}</span></div>
+                <div class="ubar"><div class="ubar-f" style="width:${pct}%;background:${bc}"></div></div>
+                <div class="utxt"><span>${esc(l.used_fmt)} مصرف شده</span><span>سهمیه: ${lim}</span></div>
               </div>
             </div>
             <div class="cfg-tear"></div>
             <div class="cfg-bottom">
-              <button class="cfg-link-toggle" id="vt-${{i}}" onclick="toggleLink(${{i}})">
+              <button class="cfg-link-toggle" id="vt-${i}" onclick="toggleLink(${i})">
                 <span class="ltl"><i class="ti ti-eye"></i> <span>نمایش لینک کانفیگ</span></span>
                 <i class="ti ti-chevron-down"></i>
               </button>
-              <div class="cfg-vless-wrap" id="vw-${{i}}">
+              <div class="cfg-vless-wrap" id="vw-${i}">
                 <div class="cfg-vless-inner">
-                  <div class="cfg-vless">${{esc(l.vless_link)}}</div>
+                  <div class="cfg-vless">${esc(l.vless_link)}</div>
                 </div>
               </div>
               <div class="cfg-actions">
                 <button class="btn btn-p"
-                  onclick="navigator.clipboard.writeText(window._x4gLinks[${{i}}].vless).then(()=>toast('لینک کپی شد ✓','ok'))">
+                  onclick="navigator.clipboard.writeText(window._x4gLinks[${i}].vless).then(()=>toast('لینک کپی شد ✓','ok'))">
                   <i class="ti ti-copy"></i> کپی لینک
                 </button>
                 <button class="btn btn-g"
-                  onclick="showQR(window._x4gLinks[${{i}}].label, window._x4gLinks[${{i}}].vless)">
+                  onclick="showQR(window._x4gLinks[${i}].label, window._x4gLinks[${i}].vless)">
                   <i class="ti ti-qrcode"></i> QR
                 </button>
               </div>
             </div>
           </div>
         `;
-      }}).join('')}}
+      }).join('')}
     </div>
   `;
   setTimeout(() => autoRefresh(), 30000);
-}}
+}
 
-function copyAllConfigs(){{
-  const links=window._x4gLinks||[];
-  if(!links.length){{toast('کانفیگی برای کپی نیست','');return}}
-  const text=links.map(l=>l.vless).join('\\n');
-  navigator.clipboard.writeText(text).then(()=>toast('همه‌ی '+toFa(links.length)+' کانفیگ کپی شد ✓','ok'));
-}}
+// ── کپی همه ──
+function copyAllConfigs(){
+  const links = window._x4gLinks || [];
+  if(!links.length){ toast('کانفیگی برای کپی نیست', ''); return; }
+  const text = links.map(l => l.vless).join('\\n');
+  navigator.clipboard.writeText(text).then(() => toast('همه‌ی ' + toFa(links.length) + ' کانفیگ کپی شد ✓', 'ok'));
+}
 
-async function autoRefresh(){{
-  try{{
+// ── رفرش خودکار ──
+async function autoRefresh(){
+  try{
     const data = await loadData(savedPw);
-    if (!data.locked) renderContent(data);
-  }} catch(e) {{}}
-}}
+    if(!data.locked) renderContent(data);
+  } catch(e) {}
+}
 
-async function init(){{
-  try{{
+// ── مقداردهی اولیه ──
+async function init(){
+  try{
     const data = await loadData();
-    if (data.locked) {{ renderLock(data.name); return; }}
+    if(data.locked){ renderLock(data.name); return; }
     renderContent(data);
-  }} catch(e) {{
+  } catch(e){
     document.getElementById('root').innerHTML =
       '<div class="empty-state" style="color:var(--red-t)"><i class="ti ti-alert-circle"></i>خطا در بارگذاری</div>';
-  }}
-}}
+  }
+}
 
 init();
 </script>
